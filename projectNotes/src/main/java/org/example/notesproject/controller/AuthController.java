@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+<<<<<<< HEAD
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -65,3 +66,12 @@ public class AuthController {
 
 }
 */
+=======
+//@RestController
+//@RequestMapping("/api/auth")
+//public class AuthController {
+//    private final UserMapper userMapper;
+//    private final UserService userService;
+//    private final AuthenticationHelper authenticationHelper;
+//}
+>>>>>>> 5ae2831bb4d443692ba7996810c329f28b96b378
