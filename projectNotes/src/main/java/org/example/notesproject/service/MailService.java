@@ -7,6 +7,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class MailService {
 
@@ -16,6 +18,7 @@ public class MailService {
         this.sender = sender;
     }
     public void sendReminder(Reminder r) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(r.getCreator().getEmail());
         msg.setSubject("💡 Reminder due: " + r.getTodoItem().getText());
@@ -26,7 +29,8 @@ public class MailService {
                 """.formatted(
                 r.getCreator().getUsername(),
                 r.getTodoItem().getText(),
-                r.getRemindAt())
+                r.getRemindAt().format(formatter))
+
         );
         sender.send(msg);
     }
