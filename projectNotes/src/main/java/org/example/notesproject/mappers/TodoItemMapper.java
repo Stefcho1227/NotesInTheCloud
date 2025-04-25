@@ -11,10 +11,10 @@ public class TodoItemMapper {
     public TodoItem fromDto(TodoItemInDTO dto) {
         TodoItem todoItem = new TodoItem();
         todoItem.setText(dto.getText());
-        if(dto.getDone() == null){
+        if(dto.getIsDone() == null){
             todoItem.setDone(false);
         } else{
-            todoItem.setDone(dto.getDone());
+            todoItem.setDone(dto.getIsDone());
         }
         return todoItem;
     }
@@ -22,8 +22,8 @@ public class TodoItemMapper {
         if(dto.getText() != null){
             todoItem.setText(dto.getText());
         }
-        if(dto.getDone() != null){
-            dto.setDone(dto.getDone());
+        if(dto.getIsDone() != null){
+            todoItem.setDone(dto.getIsDone());
         }
     }
 }

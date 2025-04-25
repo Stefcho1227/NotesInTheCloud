@@ -24,7 +24,6 @@ public class Reminder {
     private User creator;
 
     @Column(name="remind_at")
-    @FutureOrPresent
     private LocalDateTime remindAt;
     @Column(name="is_sent")
     private Boolean isSent;

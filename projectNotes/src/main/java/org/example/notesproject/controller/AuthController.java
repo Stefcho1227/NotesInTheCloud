@@ -66,7 +66,6 @@ public class AuthController {
 
 }
 */
-=======
 //@RestController
 //@RequestMapping("/api/auth")
 //public class AuthController {
@@ -74,4 +73,3 @@ public class AuthController {
 //    private final UserService userService;
 //    private final AuthenticationHelper authenticationHelper;
 //}
->>>>>>> 5ae2831bb4d443692ba7996810c329f28b96b378
