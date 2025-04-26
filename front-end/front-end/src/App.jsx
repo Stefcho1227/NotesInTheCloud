@@ -18,15 +18,25 @@ function App() {
     const [noteToDelete, setNoteToDelete] = useState(null);
 
     useEffect(() => {
-        const loadNotes = async () => {
-            try {
-                const data = await fetchNotes();
-                setNotes(data);
-            } catch (err) {
-                console.error("Failed to load notes", err);
-            }
-        };
-        loadNotes();
+        // const loadNotes = async () => {
+        //     try {
+        //         const data = await fetchNotes();
+        //         setNotes(data);
+        //     } catch (err) {
+        //         console.error("Failed to load notes", err);
+        //     }
+        // };
+        // loadNotes();
+
+        fetchNotes()
+            .then(data=> {
+                console.log(data)
+                data.json()
+            })
+            .then(notes => {
+                setNotes(notes)//защо в 2 компонента фечваш едно и също нещо
+                })
+            .catch(err=>console.log(err.message))
 
         // const sampleNotes = [
         //     {id:1, title: 'Note 1', content: 'This is the first note', lastModified: new Date()},

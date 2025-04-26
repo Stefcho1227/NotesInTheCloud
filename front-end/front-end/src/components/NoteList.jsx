@@ -10,18 +10,29 @@ const NoteList = ({ activeNote, onNoteSelect, }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const loadNotes = async () => {
-            try {
-                const data = await fetchNotes();
-                setNotes(data);
-            } catch (err) {
+        // const loadNotes = async () => {
+        //     try {
+        //         const data = await fetchNotes();
+        //         setNotes(data);
+        //     } catch (err) {
+        //         setError("Failed to load notes");
+        //         console.error(err);
+        //     } finally {
+        //         setLoading(false);
+        //     }
+        // };
+        fetchNotes()
+            .then(data=> {
+                console.log(data)
+                data.json()
+            })
+            .then(data=>setNotes(data))
+            .catch(error=>{
                 setError("Failed to load notes");
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadNotes();
+                console.log(error.message)
+            })
+            .finally(()=>setLoading(false))
+        //loadNotes();
     }, []);
 
     const handleSearch = (e) => {

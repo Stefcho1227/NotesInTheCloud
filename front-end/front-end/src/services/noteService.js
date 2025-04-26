@@ -1,4 +1,4 @@
-import {API_BASE, DEFAULT_HEADERS, handleResponse} from './apiConfig';
+import {DEFAULT_HEADERS, handleResponse} from './apiConfig';
 
 // export const fetchNotes = async () => {
 //     const response = await fetch(`${API_BASE}/notes`, {
@@ -16,13 +16,27 @@ export const fetchWithAuth = async (url, options = {}) => {
         },
         credentials: 'include' // For session cookies
     });
-    return handleResponse(response);
+    return await handleResponse(response);
 };
 
+
+// In noteService.js
+// In noteService.js
 export const fetchNotes = async () => {
-    return fetchWithAuth(`${API_BASE}/notes`);
-};
+    const response = await fetch('/api/notes'); // Note: using /api prefix
 
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        throw new Error(`Expected JSON but got: ${text.substring(0, 100)}...`);
+    }
+
+    return response.json();
+};
 export const fetchNoteById = async (id) => {
     // const response = await fetch(`${API_BASE}/notes/${id}`, {
     //     headers: DEFAULT_HEADERS,
@@ -30,7 +44,7 @@ export const fetchNoteById = async (id) => {
     // });
     // return handleResponse(response);
 
-    return fetchWithAuth(`${API_BASE}/notes/${id}`);
+    return await fetchWithAuth(`${import.meta.env.VITE_API_BASE}/notes/${id}`);
 };
 
 export const createNote = async (noteData) => {
@@ -47,13 +61,13 @@ export const createNote = async (noteData) => {
     // });
     // return handleResponse(response);
 
-    return fetchWithAuth(`${API_BASE}/notes`, {
+    return await fetchWithAuth(`${API_BASE}/notes`, {
         method:'POST',
         body: JSON.stringify({
             title: noteData.title,
             content: noteData.content,
             isPublic: noteData.isPublic || false,
-            ownerId:  1 //possibly wrong
+            ownerId:  1
         }),
     });
 };
@@ -82,7 +96,7 @@ export const updateNote = async (id, noteData) => {
 };
 
 export const deleteNote = async (id) => {
-    return fetchWithAuth(`${API_BASE}/notes/${id}`,{
+    return await fetchWithAuth(`${API_BASE}/notes/${id}`,{
         method:'DELETE'
     });
 
@@ -96,7 +110,7 @@ export const deleteNote = async (id) => {
 };
 
 export const shareNote = async (noteId, userId, permission) => {
-    return fetchWithAuth(`${API_BASE}/notes-shares`,{
+    return await fetchWithAuth(`${API_BASE}/notes-shares`,{
         method:'POST',
         body: JSON.stringify({ noteId, userId, permission}),
     });
