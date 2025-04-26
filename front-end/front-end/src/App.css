@@ -9,6 +9,11 @@ body {
     background-color: #f5f5f5;
 }
 
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .app {
     display: flex;
     flex-direction: column;
@@ -164,6 +169,20 @@ body {
     padding: 2rem;
     text-align: center;
     color: #757575;
+}
+
+.publicToggle {
+    margin: 1rem 0;
+    padding: 0.5rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.publicToggle label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
 }
 
 .noteEditor {

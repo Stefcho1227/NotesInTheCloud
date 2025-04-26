@@ -5,6 +5,7 @@ import NoteList from './components/NoteList';
 import NoteEditor from './components/NoteEditor';
 import DeleteConfirmationDialog from "./components/DeleteConfirmationDialog.jsx";
 import './App.css'
+import {fetchNotes} from "./services/noteService.js";
 
 
 function App() {
@@ -17,28 +18,44 @@ function App() {
     const [noteToDelete, setNoteToDelete] = useState(null);
 
     useEffect(() => {
-        const sampleNotes = [
-            {id:1, title: 'Note 1', content: 'This is the first note', lastModified: new Date()},
-            {id:2, title: 'Note 2', content: 'This is the second note', lastModified: new Date()}
-        ];
-        setNotes(sampleNotes);
+        const loadNotes = async () => {
+            try {
+                const data = await fetchNotes();
+                setNotes(data);
+            } catch (err) {
+                console.error("Failed to load notes", err);
+            }
+        };
+        loadNotes();
+
+        // const sampleNotes = [
+        //     {id:1, title: 'Note 1', content: 'This is the first note', lastModified: new Date()},
+        //     {id:2, title: 'Note 2', content: 'This is the second note', lastModified: new Date()}
+        // ];
+        // setNotes(sampleNotes);
     }, []);
 
     const filterNotes = notes.filter(note =>
-        note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        note.content.toLowerCase().includes(searchTerm.toLowerCase())
+        note?.title?.toLowerCase()||''.includes(searchTerm.toLowerCase()) ||
+        note?.content?.toLowerCase()||''.includes(searchTerm.toLowerCase())
     );
 
     const handleAddItem = () => {
         if(activeTab === 'notes') {
-            const newNote = {
-                id: Date.now(),
+            // const newNote = {
+            //     id: Date.now(),
+            //     title: 'Untitled Note',
+            //     content: '',
+            //     lastModified: new Date()
+            //   };
+            //   setNotes([newNote, ...notes]);
+              //setActiveNote(newNote);
+            setActiveNote({
+                id: Date.now(), //TEMP
                 title: 'Untitled Note',
                 content: '',
-                lastModified: new Date()
-              };
-              setNotes([newNote, ...notes]);
-              setActiveNote(newNote);
+                isPublic: false
+            });
               setIsEditing(true);
         }
         else {
@@ -47,14 +64,38 @@ function App() {
         
       };
 
-    const handleUpdateNote = (updatedNote) => {
-        const updatedNotes = notes.map(note => 
-            note.id === updatedNote.id ? {...updatedNote, lastModified: new Date()} : note
-        );
-        setNotes(updatedNotes);
-        setActiveNote(updatedNote);
-        setIsEditing(true);
+    const handleUpdateNote = (savedNote) => {
+        setNotes(prevNotes => {
+            const existing = prevNotes.find(note => note.id === savedNote.id);
+            if (existing) {
+                // Update existing note
+                return prevNotes.map(note =>
+                    note.id === savedNote.id ? savedNote : note
+                );
+            } else {
+                // Add new note
+                return [savedNote, ...prevNotes];
+            }
+        });
+        setActiveNote(savedNote);
+        setIsEditing(false);
     };
+
+
+    // const handleUpdateNote = (updatedNote) => {
+    //     if (notes.some(note => note.id === updatedNote.id)) {
+    //         const updatedNotes = notes.map(note =>
+    //             note.id === updatedNote.id ? {...updatedNote, lastModified: new Date()} : note
+    //         );
+    //         setNotes(updatedNotes);
+    //     }
+    //     else {
+    //         setNotes([{...updatedNote, lastModified: new Date()}, ...notes]);
+    //     }
+    //
+    //     setActiveNote(updatedNote);
+    //     setIsEditing(true);
+    // };
 
     const handleDeleteNote = (id) => {
         const note = notes.find(note => note.id === id)
