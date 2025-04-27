@@ -1,8 +1,8 @@
 import React from "react";
 
-
 const NoteItem = ({note, isActive, onSelect, onDelete}) => {
-    const formattedDate = new Date(note.lastModified).toLocaleString();
+
+    const formattedDate = note.updatedAt ? new Date(note.updatedAt).toLocaleString() : new Date(note.createdAt).toLocaleString();
 
     const handleDelete = (e) => {
         e.stopPropagation();
