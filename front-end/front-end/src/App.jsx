@@ -24,6 +24,7 @@ function App() {
     useEffect(() => {
         fetchNotes().then(res => setNotes(res.data))
             .catch((err) => console.error("Could not load notes", err));
+
     }, []);
 
     const filteredNotes = notes.filter(note =>

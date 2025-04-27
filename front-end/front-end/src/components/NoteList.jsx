@@ -4,7 +4,6 @@ import {useState} from 'react';
 
 const NoteList = ({ notes, activeNote, onNoteSelect, onNoteDelete, onSearch}) => {
     const [searchInput, setSearchInput] = useState('');
-
     const handleSearch = (e) => {
         setSearchInput(e.target.value);
         onSearch(e.target.value);
