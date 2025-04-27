@@ -12,11 +12,8 @@
     "vite": "^6.3.1"
   },
   "dependencies": {
-<<<<<<< HEAD
     "axios": "^1.9.0",
-=======
     "@vitejs/plugin-react": "^4.4.1",
->>>>>>> 444203ce3c392e291344ea441096042c3b707caa
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   }
