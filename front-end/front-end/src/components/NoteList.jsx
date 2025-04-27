@@ -1,76 +1,36 @@
 import React from "react";
 import NoteItem  from "./NoteItem";
-import {useState, useEffect} from 'react';
-import {fetchNotes, deleteNote} from '../services/noteService.js';
+import {useState} from 'react';
 
-const NoteList = ({ activeNote, onNoteSelect, }) => {
-    const [notes,setNotes] = useState([]);
+const NoteList = ({ notes, activeNote, onNoteSelect, onNoteDelete, onSearch}) => {
     const [searchInput, setSearchInput] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const loadNotes = async () => {
-            try {
-                const data = await fetchNotes();
-                setNotes(data);
-            } catch (err) {
-                setError("Failed to load notes");
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadNotes();
-    }, []);
 
     const handleSearch = (e) => {
         setSearchInput(e.target.value);
-        //onSearch(e.target.value);
+        onSearch(e.target.value);
     };
-
-    const handleDelete = async (id) => {
-        try {
-            await deleteNote(id);
-            setNotes(notes.filter(note => note.id !== id));
-            if (activeNote?.id === id) {
-                onNoteSelect(null);
-            }
-        } catch (err) {
-            console.error("Failed to delete note", err);
-            alert("Could not delete note. Please try again.");
-        }
-    };
-
-    const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchInput.toLowerCase())
-    || note.content.toLowerCase().includes(searchInput.toLowerCase())
-    );
-
-    if (loading) return <div className={'emptyState'}>Loading notes...</div>;
-    if (error) return <div className={'emptyState'}>{error}</div>;
 
     return (
         <ul className="noteList">
-            <input 
+            <input
                 type='text'
                 placeholder='Search notes...'
                 value={searchInput}
                 onChange={handleSearch}
                 className='searchInput'/>
 
-            {filteredNotes.length === 0 ?
+            {notes.length === 0 ?
             (<div className="emptyState">
                 No notes found
             </div>) : (
-                
-                filteredNotes.map(note => (
+
+                notes.map(note => (
                     <NoteItem
                     key={note.id}
                     note={note}
                     isActive={activeNote && activeNote.id === note.id}
-                    onSelect={() => onNoteSelect(note)}
-                    onDelete={handleDelete}/>// alt: onDelete={() => onNoteDelete(note.id)}
+                    onSelect={onNoteSelect}
+                    onDelete={onNoteDelete}/>
                 ))
             )}
         </ul>

@@ -1,6 +1,6 @@
+
 import React from "react";
 import {useState, useEffect} from 'react';
-import {createNote, updateNote} from "../services/noteService.js";
 
 const NoteEditor = ({note, onUpdateNote, onCancel}) => {
     const [title, setTitle] = useState('');
@@ -35,12 +35,7 @@ const NoteEditor = ({note, onUpdateNote, onCancel}) => {
         setIsSaving(true);
 
         try {
-            const noteData = {title, content, isPublic};
-            const savedNote = note.id ?
-                await updateNote(note.id, noteData) :
-                await createNote({...noteData, ownerId : 1}); // TEMP, replace with actual user ID later
-
-            onUpdateNote(savedNote);
+            onUpdateNote({...note, title, content, isPublic});
         } catch (err) {
             console.error("Failed to save note: ", err);
             alert("Failed to save note. Please try again.");
@@ -64,13 +59,13 @@ const NoteEditor = ({note, onUpdateNote, onCancel}) => {
                 <input
                 type='text'
                 className='noteTitle'
-                value={title || 'Untitled Note'}
+                value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder='Note title'/>
-                
+
                 <textarea
                 className='noteContent'
-                value={content || ''}
+                value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder='Write your note here...'
                 />
@@ -89,8 +84,8 @@ const NoteEditor = ({note, onUpdateNote, onCancel}) => {
                     <button onClick={handleSave} className='saveBtn' disabled={isSaving}>{isSaving ? "Saving..." : "Save" }</button>
 
                     <button onClick={onCancel} className='cancelBtn' disabled={isSaving}>Cancel</button>
-                    
-                </div>  
+
+                </div>
             </div>
         );
 };

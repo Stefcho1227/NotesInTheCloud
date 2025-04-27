@@ -1,118 +1,95 @@
-import React from "react";
-import {useState, useEffect} from 'react';
-import Header from './components/Header';
-import NoteList from './components/NoteList';
-import NoteEditor from './components/NoteEditor';
+import React, { useState, useEffect } from "react";
+import Header from "./components/Header";
+import NoteList from "./components/NoteList";
+import NoteEditor from "./components/NoteEditor";
 import DeleteConfirmationDialog from "./components/DeleteConfirmationDialog.jsx";
 import './App.css'
-import {fetchNotes} from "./services/noteService.js";
+import {
+    fetchNotes,
+    createNote,
+    updateNote,
+    deleteNote} from "./api/notesApi.js";
 
+const LOGGED_USER_ID = 1; // To be replaced with id from session
 
 function App() {
     const [activeTab, setActiveTab] = useState('notes');
     const [notes, setNotes] = useState([]);
-    const [todos, setTodos] = useState({});
+    //const [todos, setTodos] = useState({});
     const [activeNote, setActiveNote] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [noteToDelete, setNoteToDelete] = useState(null);
 
     useEffect(() => {
-        const loadNotes = async () => {
-            try {
-                const data = await fetchNotes();
-                setNotes(data);
-            } catch (err) {
-                console.error("Failed to load notes", err);
-            }
-        };
-        loadNotes();
-
-        // const sampleNotes = [
-        //     {id:1, title: 'Note 1', content: 'This is the first note', lastModified: new Date()},
-        //     {id:2, title: 'Note 2', content: 'This is the second note', lastModified: new Date()}
-        // ];
-        // setNotes(sampleNotes);
+        fetchNotes().then(res => setNotes(res.data))
+            .catch((err) => console.error("Could not load notes", err));
     }, []);
 
-    const filterNotes = notes.filter(note =>
-        note?.title?.toLowerCase()||''.includes(searchTerm.toLowerCase()) ||
-        note?.content?.toLowerCase()||''.includes(searchTerm.toLowerCase())
+    const filteredNotes = notes.filter(note =>
+        note &&
+        note.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        note.content.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleAddItem = () => {
+    const handleAddItem = async () => {
         if(activeTab === 'notes') {
-            // const newNote = {
-            //     id: Date.now(),
-            //     title: 'Untitled Note',
-            //     content: '',
-            //     lastModified: new Date()
-            //   };
-            //   setNotes([newNote, ...notes]);
-              //setActiveNote(newNote);
-            setActiveNote({
-                id: Date.now(), //TEMP
-                title: 'Untitled Note',
-                content: '',
-                isPublic: false
-            });
-              setIsEditing(true);
+            try {
+                const res = await createNote({
+                    title: 'Untitled Note',
+                    content: '',
+                    isPublic: false,
+                    ownerId: LOGGED_USER_ID
+                });
+                const newNote = res.data;
+                setNotes([newNote, ...notes]);
+                setActiveNote(newNote);
+                setIsEditing(true);
+            } catch (err) {
+                console.error("Could not create note", err);
+            }
         }
         else {
             // Add logic for adding a new todo item
         }
-        
       };
 
-    const handleUpdateNote = (savedNote) => {
-        setNotes(prevNotes => {
-            const existing = prevNotes.find(note => note.id === savedNote.id);
-            if (existing) {
-                // Update existing note
-                return prevNotes.map(note =>
-                    note.id === savedNote.id ? savedNote : note
-                );
-            } else {
-                // Add new note
-                return [savedNote, ...prevNotes];
-            }
-        });
-        setActiveNote(savedNote);
-        setIsEditing(false);
+    const handleUpdateNote = async (localNote) => {
+        try {
+            const payload = {
+                title: localNote.title,
+                content: localNote.content,
+                isPublic: localNote.isPublic ?? false,
+                ownerId: LOGGED_USER_ID
+            };
+
+            const res = await updateNote(localNote.id, payload);
+            const saved = res.data;
+
+            setNotes(notes.map(note => (note.id === saved.id ? saved : note)));
+            setActiveNote(saved);
+            setIsEditing(true);
+        } catch (err) {
+            console.error("Could not update note", err);
+        }
     };
-
-
-    // const handleUpdateNote = (updatedNote) => {
-    //     if (notes.some(note => note.id === updatedNote.id)) {
-    //         const updatedNotes = notes.map(note =>
-    //             note.id === updatedNote.id ? {...updatedNote, lastModified: new Date()} : note
-    //         );
-    //         setNotes(updatedNotes);
-    //     }
-    //     else {
-    //         setNotes([{...updatedNote, lastModified: new Date()}, ...notes]);
-    //     }
-    //
-    //     setActiveNote(updatedNote);
-    //     setIsEditing(true);
-    // };
 
     const handleDeleteNote = (id) => {
         const note = notes.find(note => note.id === id)
         setNoteToDelete(note);
-
-        // setNotes(notes.filter(note => note.id !== id));
-        // if(activeNote && activeNote.id === id) {
-        //     setActiveNote(null);
-        //     setIsEditing(false);
-        // }
     };
 
-    const confirmDelete = () => {
-        setNotes(notes.filter(note => note.id !== noteToDelete.id));
-        if (activeNote?.id === noteToDelete.id) {
-            setActiveNote(null);
-            setIsEditing(false);
+    const confirmDelete = async () => {
+        try {
+            await deleteNote(noteToDelete.id);
+            setNotes(notes.filter(note => note.id !== noteToDelete.id));
+            if (activeNote?.id === noteToDelete.id) {
+                setActiveNote(null);
+                setIsEditing(false);
+            }
+        } catch (err) {
+            console.error("Could not delete note", err);
+            alert("Delete failed");
         }
         setNoteToDelete(null);
     };
@@ -122,9 +99,6 @@ function App() {
     }
 
     const handleCancelEdit = () => {
-        if(activeNote && activeNote.title === 'Untitled Note' && activeNote.content === '') {//fix statement
-            setNotes(notes.filter(note => note.id !== activeNote.id));
-        }
         setActiveNote(null);
         setIsEditing(false);
     };
@@ -139,16 +113,18 @@ function App() {
             {activeTab === 'notes' ? (
                 <div className='mainContent'>
                     <NoteList
-                    notes={filterNotes}
+                    notes={filteredNotes}
                     activeNote={activeNote}
                     onNoteSelect={handleNoteSelect}
                     onNoteDelete={handleDeleteNote}
                     onSearch={setSearchTerm}/>
 
+                    {activeNote &&
                     <NoteEditor
                     note={activeNote}
                     onUpdateNote={handleUpdateNote}
                     onCancel={handleCancelEdit}/>
+                    }
             </div>
             ) : (
             <div/* To-Do List Component *//>
@@ -163,7 +139,7 @@ function App() {
         onConfirm={confirmDelete}
         onCancel={() => setNoteToDelete(null)}
         noteTitle={noteToDelete?.title || ''}/>
-    </div>    
+    </div>
     );
 };
 
