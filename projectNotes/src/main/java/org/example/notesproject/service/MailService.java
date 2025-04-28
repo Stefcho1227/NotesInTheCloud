@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class MailService {
 
-    private JavaMailSender sender;
+    private final JavaMailSender sender;
     @Autowired
     public MailService(JavaMailSender sender) {
         this.sender = sender;

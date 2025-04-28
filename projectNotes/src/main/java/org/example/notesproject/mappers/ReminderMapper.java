@@ -19,9 +19,8 @@ public class ReminderMapper {
         return reminder;
     }
     public void updateDto(Reminder reminder, ReminderInDTO dto){
-        if(reminder.getRemindAt() != null){
+        if(dto.getRemindAt() != null){
             reminder.setRemindAt(dto.getRemindAt());
         }
-
     }
 }
