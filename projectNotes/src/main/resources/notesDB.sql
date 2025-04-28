@@ -25,6 +25,8 @@ CREATE TABLE note_shares (
                              shared_with_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                              perm           TEXT NOT NULL CHECK (perm IN ('read','edit')),
                              created_at     TIMESTAMP NOT NULL DEFAULT NOW(),
+                             confirm_token  VARCHAR(64),
+                             confirmed      BOOLEAN,
                              UNIQUE (note_id, shared_with_id)
 );
 
