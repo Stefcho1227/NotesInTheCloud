@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="NotesProjectApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <envs>
+      <env name="DB_URL" value="jdbc:mariadb://localhost:3306/webnotes" />
+      <env name="DB_USER" value="root" />
+      <env name="DB_PASS" value="stefaneqk" />
+      <env name="MAIL_USER" value="notesinthecloud53@gmail.com" />
+      <env name="MAIL_PASS" value="azdi xecw ptfp uhjx" />
+    </envs>
+    <module name="projectNotes.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.notesproject.NotesProjectApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

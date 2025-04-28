@@ -16,11 +16,11 @@ public class NoteShare {
     @Column(name="id")
     private Integer id;
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "note_id")
     private Note note;
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "shared_with_id")
     private User sharedWith;
 
@@ -31,7 +31,29 @@ public class NoteShare {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(name = "confirm_token")
+    private String confirmToken;
+
+    @Column(name = "confirmed")
+    private Boolean confirmed;
+
     public NoteShare() {
+    }
+
+    public String getConfirmToken() {
+        return confirmToken;
+    }
+
+    public void setConfirmToken(String confirmToken) {
+        this.confirmToken = confirmToken;
+    }
+
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
     }
 
     public Integer getId() {
