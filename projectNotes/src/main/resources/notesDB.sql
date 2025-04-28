@@ -12,11 +12,8 @@ CREATE TABLE notes (
                        owner_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                        title       TEXT,
                        content     TEXT,
-                       is_public   BOOLEAN NOT NULL DEFAULT FALSE,
-                       public_slug TEXT UNIQUE,  -- случайно UUID/Hash
                        created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-                       updated_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-                       deleted_at  TIMESTAMP
+                       updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE note_shares (
@@ -50,7 +47,6 @@ CREATE TABLE notifications (
                                id           INT AUTO_INCREMENT PRIMARY KEY,
                                user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                                reminder_id  INTEGER NOT NULL REFERENCES reminders(id) ON DELETE CASCADE,
-                               channel      TEXT NOT NULL CHECK (channel IN ('email','in-app')),
                                sent_at      TIMESTAMP NOT NULL
 );
 
@@ -64,7 +60,6 @@ CREATE INDEX idx_notes_deleted_at ON notes (deleted_at);
 CREATE INDEX idx_note_shares_shared_with_id ON note_shares (shared_with_id);
 
 CREATE INDEX idx_todo_creator_id ON todo_items (creator_id);
-CREATE INDEX idx_todo_due_date ON todo_items (due_date);
 
 CREATE INDEX idx_reminders_todo_id ON reminders (todo_id);
 CREATE INDEX idx_reminders_remind_at ON reminders (remind_at);
