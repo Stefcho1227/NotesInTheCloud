@@ -51,10 +51,6 @@ public class NoteShareServiceImpl implements NoteShareService {
                 .orElseThrow(() -> new IllegalArgumentException("invalid link"));
         ns.setConfirmed(true);
         shareRepo.save(ns);
-        Note note = ns.getNote(); // не ни трябва
-        note.setIsPublic(true); // не ни трябва
-        note.setPublicSlug(token); //не ни трябва
-        noteRepo.save(note); // не ни трябва
     }
 
     @Override
