@@ -1,15 +1,16 @@
 package org.example.notesproject.helpers;
 
-import org.apache.catalina.User;
-import org.example.notesproject.mappers.UserMapper;
+import jakarta.persistence.EntityNotFoundException;
+import org.example.notesproject.exception.AuthenticationFailureException;
+import org.example.notesproject.models.User;
 import org.example.notesproject.service.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.net.http.HttpHeaders;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 @Component
 public class AuthenticationHelper {
@@ -24,7 +25,26 @@ public class AuthenticationHelper {
         this.userService = userService;
     }
 
-    /*public User tryGetUser(HttpHeaders headers) {
-        String userInfo = headers.getFirst(AUTHENTICATION_HEADER_NAME);
-    }*/
+    public User throwIfWrongAuthentication(String username, String password) {
+        User user;
+        try {
+            user = userService.findByUsername(username);
+        } catch (EntityNotFoundException e) {
+            throw new AuthenticationFailureException("Wrong username or password.");
+        }
+        String passwordHash = hashPassword(password);
+        if (!user.getPasswordHash().equals(passwordHash)) {
+            throw new AuthenticationFailureException("Wrong username or password.");
+        }
+        return user;
+    }
+    private String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
+    }
 }

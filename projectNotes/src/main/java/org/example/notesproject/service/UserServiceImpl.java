@@ -1,5 +1,6 @@
 package org.example.notesproject.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.example.notesproject.dtos.in.UserInDTO;
 import org.example.notesproject.mappers.UserMapper;
@@ -21,6 +22,15 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User create(UserInDTO userInDTO) {
+
+        if (userRepository.findByUsername(userInDTO.getUsername()).isPresent()) {
+            throw new EntityExistsException("Username already exists");
+        }
+
+        if (userRepository.findByEmail(userInDTO.getEmail()).isPresent()) {
+            throw new EntityExistsException("Username already exists");
+        }
+
         User createdUser = userMapper.fromDto(userInDTO);
         return userRepository.save(createdUser);
     }
@@ -45,5 +55,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Integer id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(()->new EntityNotFoundException("User"));
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("User"));
     }
 }

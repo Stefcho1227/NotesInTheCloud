@@ -11,4 +11,6 @@ public interface UserService {
     public User find(Integer id);
     public User update(Integer id, UserInDTO userInDTO);
     public void delete(Integer id);
+    User findByUsername(String username);
+    User findByEmail(String email);
 }

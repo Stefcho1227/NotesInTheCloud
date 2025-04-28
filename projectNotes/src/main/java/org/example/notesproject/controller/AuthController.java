@@ -1,12 +1,13 @@
-/*
 package org.example.notesproject.controller;
-
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.example.notesproject.dtos.in.UserInDTO;
+import org.example.notesproject.exception.AuthenticationFailureException;
+import org.example.notesproject.exception.DuplicateEntityException;
+import org.example.notesproject.exception.EmailException;
 import org.example.notesproject.helpers.AuthenticationHelper;
-import org.example.notesproject.mappers.UserMapper;
+
 import org.example.notesproject.models.User;
 import org.example.notesproject.service.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,43 +16,46 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-<<<<<<< HEAD
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private final UserMapper userMapper;
     private final UserService userService;
     private final AuthenticationHelper authenticationHelper;
 
     @Autowired
-    public AuthController(UserMapper userMapper, UserService userService, AuthenticationHelper authenticationHelper) {
-        this.userMapper = userMapper;
+    public AuthController(UserService userService, AuthenticationHelper authenticationHelper) {
         this.userService = userService;
         this.authenticationHelper = authenticationHelper;
     }
 
     @GetMapping("/register")
     public ResponseEntity<?> getRegisterInfo() {
-        return ResponseEntity.ok("Please POST your registration details to ");
+        return ResponseEntity.ok("Please POST your registration details to /api/auth/register");
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserInDTO userInDTO, BindingResult bindingResult, HttpSession session) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords should match.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
         }
 
-        try {
-            userService.create(userInDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(userInDTO);
-        }catch () {
+        /*if (!userInDTO.getPassword().equals(userInDTO.getConfirmPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords should match.");
+        }*/
 
+        try {
+            User createdUser = userService.create(userInDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        } catch (DuplicateEntityException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (EmailException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @GetMapping("/login")
     public ResponseEntity<?> getLoginInfo() {
-        return ResponseEntity.ok("Please POST your login details to ");
+        return ResponseEntity.ok("Please POST your login details to /api/auth/register");
     }
 
     @PostMapping("/login")
@@ -60,18 +64,19 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
         }
         try{
-            User user = authenticationHelper.
+            User user = authenticationHelper.throwIfWrongAuthentication(userInDTO.getUsername(), userInDTO.getPassword());
+            session.setAttribute("currentUser", user);
+            session.setAttribute("userId", user.getId());
+            return ResponseEntity.ok(user);
+        } catch (AuthenticationFailureException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logged out successfully.");
+    }
 }
-*/
-=======
-//@RestController
-//@RequestMapping("/api/auth")
-//public class AuthController {
-//    private final UserMapper userMapper;
-//    private final UserService userService;
-//    private final AuthenticationHelper authenticationHelper;
-//}
->>>>>>> 5ae2831bb4d443692ba7996810c329f28b96b378
+
