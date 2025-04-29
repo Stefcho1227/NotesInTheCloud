@@ -40,11 +40,11 @@ public class NoteServiceImpl implements NoteService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         createdNote.setOwner(owner);
         Note savedNote = noteRepository.save(createdNote);
-        if(savedNote.getIsPublic()){
-            String secureSlug = generateSecureSlug(savedNote.getId());
-            savedNote.setPublicSlug(BASE_URL + "{"+secureSlug+"}");
-            return noteRepository.save(savedNote);
-        }
+//        if(savedNote.getIsPublic()){
+//            String secureSlug = generateSecureSlug(savedNote.getId());
+//            savedNote.setPublicSlug(BASE_URL + "{"+secureSlug+"}");
+//            return noteRepository.save(savedNote);
+//        }
         return savedNote;
     }
 
@@ -61,14 +61,14 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public Note update(Integer id, NoteInDTO noteInDTO) {
         Note noteToUpdate = find(id);
-        Boolean wasPublic = noteToUpdate.getIsPublic();
+        //Boolean wasPublic = noteToUpdate.getIsPublic();
         noteMapper.updateDto(noteToUpdate, noteInDTO);
-        if (Boolean.TRUE.equals(noteInDTO.getIsPublic()) && !Boolean.TRUE.equals(wasPublic)) {
-            String secureSlug = generateSecureSlug(id);
-            noteToUpdate.setPublicSlug(BASE_URL + "{" + secureSlug + "}");
-        } else if (!Boolean.TRUE.equals(noteInDTO.getIsPublic()) && Boolean.TRUE.equals(wasPublic)) {
-            noteToUpdate.setPublicSlug(null);
-        }
+//        if (Boolean.TRUE.equals(noteInDTO.getIsPublic()) && !Boolean.TRUE.equals(wasPublic)) {
+//            String secureSlug = generateSecureSlug(id);
+//            noteToUpdate.setPublicSlug(BASE_URL + "{" + secureSlug + "}");
+//        } else if (!Boolean.TRUE.equals(noteInDTO.getIsPublic()) && Boolean.TRUE.equals(wasPublic)) {
+//            noteToUpdate.setPublicSlug(null);
+//        }
         return noteRepository.save(noteToUpdate);
     }
 

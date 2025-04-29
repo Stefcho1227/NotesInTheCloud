@@ -6,7 +6,7 @@ public class NoteInDTO {
     @Size(min = 1, max = 60, message = "Title should be between 1 and 60 characters long")
     private String title;
     private String content;
-    private Boolean isPublic;
+    //private Boolean isPublic;
     private Integer ownerId;
 
     public Integer getOwnerId() {
@@ -33,11 +33,11 @@ public class NoteInDTO {
         this.content = content;
     }
 
-    public Boolean getIsPublic() {
-        return isPublic;
-    }
-
-    public void setIsPublic(Boolean isPublic) {
-        this.isPublic = isPublic;
-    }
+//    public Boolean getIsPublic() {
+//        return isPublic;
+//    }
+//
+//    public void setIsPublic(Boolean isPublic) {
+//        this.isPublic = isPublic;
+//    }
 }

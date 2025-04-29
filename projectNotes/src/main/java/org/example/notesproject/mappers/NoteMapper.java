@@ -16,11 +16,11 @@ public class NoteMapper {
         } else{
             note.setContent(dto.getContent());
         }
-        if(dto.getIsPublic() == null){
-            note.setIsPublic(false);
-        } else{
-            note.setIsPublic(dto.getIsPublic());
-        }
+//        if(dto.getIsPublic() == null){
+//            note.setIsPublic(false);
+//        } else{
+//            note.setIsPublic(dto.getIsPublic());
+//        }
         return note;
     }
     public void updateDto(Note note, NoteInDTO dto){
@@ -30,10 +30,10 @@ public class NoteMapper {
         if(dto.getContent() != null){
             note.setContent(dto.getContent());
         }
-        if(dto.getIsPublic() != null){
-            note.setIsPublic(dto.getIsPublic());
-        }else{
-            note.setIsPublic(false);
-        }
+//        if(dto.getIsPublic() != null){
+//            note.setIsPublic(dto.getIsPublic());
+//        }else{
+//            note.setIsPublic(false);
+//        }
     }
 }

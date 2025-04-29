@@ -20,8 +20,8 @@ public class Notification {
     @JoinColumn(name = "reminder_id")
     private Reminder reminder;
 
-    @Enumerated(EnumType.STRING)
-    private Channel channel;
+//    @Enumerated(EnumType.STRING)
+//    private Channel channel;
 
     @Column(name="sent_at")
     private LocalDateTime sentAt;
@@ -53,13 +53,13 @@ public class Notification {
         this.reminder = reminder;
     }
 
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
+//    public Channel getChannel() {
+//        return channel;
+//    }
+//
+//    public void setChannel(Channel channel) {
+//        this.channel = channel;
+//    }
 
     public LocalDateTime getSentAt() {
         return sentAt;
