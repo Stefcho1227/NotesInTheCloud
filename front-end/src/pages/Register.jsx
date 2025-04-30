@@ -14,7 +14,7 @@ function Register() {
 
         try {
             await axios.post("http://localhost:8080/api/auth/register", {email, username, password});
-            navigate("/");
+            navigate("/notes");
         } catch(err) {
             setError("Registration failed. Please try again.");
         }
