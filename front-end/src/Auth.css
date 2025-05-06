@@ -1,4 +1,4 @@
-main {
+.registerPage main, .loginPage main {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -6,7 +6,7 @@ main {
     background-color: #f5f5f5;
 }
 
-section {
+.registerPage section, .loginPage section {
     background-color: white;
     padding: 2rem;
     border-radius: 8px;
@@ -15,29 +15,30 @@ section {
     max-width: 400px;
 }
 
-h1, p{
+.registerPage h1, .registerPage p,
+.loginPage h1, .loginPage p{
     text-align: center;
     margin-bottom: 1.5rem;
     color: #333;
 }
 
-form {
+.registerPage form, .loginPage form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-div{
+.registerPage div, .loginPage div{
     display: flex;
     flex-direction: column;
 }
 
-label {
+.registerPage label, .loginPage label{
     font-weight: 500;
     margin-bottom: 0.3rem;
 }
 
-input {
+.registerPage input, .loginPage input {
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -50,7 +51,7 @@ input {
     box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
 }
 
-button {
+.registerPage button, .loginPage button {
     padding: 1rem;
     margin: 1rem;
     border: none;
@@ -62,7 +63,8 @@ button {
     transition: background-color 0.2s ease;
 }
 
-button:hover{
+.registerPage button:hover,
+.loginPage button:hover{
     background-color: #3367d6;
 }
 

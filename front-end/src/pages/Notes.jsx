@@ -95,8 +95,14 @@ function Notes() {
         setNoteToDelete(null);
     };
     const handleNoteSelect = (note) => {
-        setActiveNote(note);
-        setIsEditing(true);
+        if (activeNote && activeNote.id === note.id) {
+            setActiveNote(null);
+            setIsEditing(false);
+        }
+        else {
+            setActiveNote(note);
+            setIsEditing(true);
+        }
     }
 
     const handleCancelEdit = () => {

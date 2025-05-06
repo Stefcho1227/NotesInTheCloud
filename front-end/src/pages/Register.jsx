@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router";
 import axios from "axios";
+import "../Auth.css";
 
 function Register() {
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ function Register() {
     }
 
     return (
+        <div className="registerPage">
         <main>
             <section>
                 <h1>Register</h1>
@@ -60,6 +62,7 @@ function Register() {
                 <p>Already have an account? <a href = "/" onClick={(e) => {e.preventDefault(); navigate('/');}}>Log in</a></p>
             </section>
         </main>
+        </div>
     );
 }
 

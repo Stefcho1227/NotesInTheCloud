@@ -21,6 +21,7 @@ function LogIn() {
     }
 
     return (
+        <div className="loginPage">
         <main>
             <section>
                 <h1>Log in</h1>
@@ -51,7 +52,7 @@ function LogIn() {
                 <p>Do not have an account yet? <a href = "/register" onClick={(e) => {e.preventDefault(); navigate('/register');}}>Register</a></p>
             </section>
         </main>
-
+        </div>
     );
 
 }

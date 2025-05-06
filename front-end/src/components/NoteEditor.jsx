@@ -7,7 +7,7 @@ const NoteEditor = ({note, onUpdateNote, onCancel}) => {
     const [content, setContent] = useState('');
     const [isPublic, setIsPublic] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
-
+    const [hasChanges, setHasChanges] = useState(false);
     useEffect(() => {
         if (note) {
             setTitle(note.title);
@@ -21,6 +21,18 @@ const NoteEditor = ({note, onUpdateNote, onCancel}) => {
         }
     }, [note]);
 
+    useEffect(() => {
+        const trimmedTitle = title.trim();
+        const originalTitle = note.title.trim();
+
+        const changesExist = (
+          trimmedTitle !== originalTitle ||
+          content !== note.content ||
+          isPublic !== (note.isPublic || false)
+        );
+
+        setHasChanges(changesExist);
+    }, [title, content, isPublic, note]);
     const handleSave = async () => {
         if (!title || !title.trim()) {
         alert("Note title cannot be empty");
@@ -81,7 +93,7 @@ const NoteEditor = ({note, onUpdateNote, onCancel}) => {
                 </div>
 
                 <div className='editorActions'>
-                    <button onClick={handleSave} className='saveBtn' disabled={isSaving}>{isSaving ? "Saving..." : "Save" }</button>
+                    <button onClick={handleSave} className='saveBtn' disabled={isSaving || !hasChanges}>{isSaving ? "Saving..." : "Save" }</button>
 
                     <button onClick={onCancel} className='cancelBtn' disabled={isSaving}>Cancel</button>
 

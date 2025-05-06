@@ -121,8 +121,10 @@ button:disabled {
     background-color: #f9f9f9;
 }
 
-.noteItem:active {
-    background-color: #e8f0fe;
+.noteItem.active {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    border-color: #aaa;
 }
 
 .noteItemHeader {
