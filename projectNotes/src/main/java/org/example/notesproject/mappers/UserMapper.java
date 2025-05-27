@@ -3,6 +3,7 @@ package org.example.notesproject.mappers;
 import org.example.notesproject.dtos.in.UserInDTO;
 import org.example.notesproject.dtos.out.UserOutDTO;
 import org.example.notesproject.models.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -12,11 +13,17 @@ import java.util.Base64;
 
 @Component
 public class UserMapper {
+    private final PasswordEncoder encoder;
+
+    public UserMapper(PasswordEncoder encoder) {
+        this.encoder = encoder;
+    }
+
     public User fromDto(UserInDTO dto) {
         User user = new User();
         user.setEmail(dto.getEmail());
         user.setUsername(dto.getUsername());
-        user.setPasswordHash(hashPassword(dto.getPassword()));
+        user.setPasswordHash(encoder.encode(dto.getPassword()));
         return user;
     }
     public void updateDto(User user, UserInDTO dto){
@@ -27,11 +34,11 @@ public class UserMapper {
             user.setEmail(dto.getEmail());
         }
         if(dto.getPassword() != null){
-            user.setPasswordHash(hashPassword(dto.getPassword()));
+            user.setPasswordHash(encoder.encode(dto.getPassword()));
         }
     }
 
-    private String hashPassword(String password) {
+    /*private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
@@ -39,5 +46,5 @@ public class UserMapper {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error hashing password", e);
         }
-    }
+    }*/
 }

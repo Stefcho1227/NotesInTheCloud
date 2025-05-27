@@ -34,9 +34,19 @@ public class User {
     private List<Note> notes = new ArrayList<>();
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     private List<TodoItem> todoItems = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
 
 
     public User() {
+    }
+
+    public List<RefreshToken> getRefreshTokens() {
+        return refreshTokens;
+    }
+
+    public void setRefreshTokens(List<RefreshToken> refreshTokens) {
+        this.refreshTokens = refreshTokens;
     }
 
     public List<TodoItem> getTodoItems() {

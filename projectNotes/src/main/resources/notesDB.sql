@@ -49,6 +49,14 @@ CREATE TABLE notifications (
                                reminder_id  INTEGER NOT NULL REFERENCES reminders(id) ON DELETE CASCADE,
                                sent_at      TIMESTAMP NOT NULL
 );
+CREATE TABLE refresh_tokens (
+                                id           INT AUTO_INCREMENT PRIMARY KEY,
+                                token        VARCHAR(64) NOT NULL UNIQUE,  -- UUID → 36 знака, 64 е повече от достатъчно
+                                expiry_date  TIMESTAMP   NOT NULL,
+                                user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX idx_refresh_token_token ON refresh_tokens(token);
 
 
 CREATE INDEX idx_users_username ON users (username);

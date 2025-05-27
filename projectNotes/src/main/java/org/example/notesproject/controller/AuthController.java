@@ -2,82 +2,110 @@ package org.example.notesproject.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.example.notesproject.dtos.in.LoginRequest;
+import org.example.notesproject.dtos.in.RegisterRequest;
 import org.example.notesproject.dtos.in.UserInDTO;
+import org.example.notesproject.dtos.out.LoginResponse;
+import org.example.notesproject.dtos.out.RefreshResponse;
 import org.example.notesproject.exception.AuthenticationFailureException;
 import org.example.notesproject.exception.DuplicateEntityException;
 import org.example.notesproject.exception.EmailException;
 import org.example.notesproject.helpers.AuthenticationHelper;
 
+import org.example.notesproject.models.RefreshToken;
 import org.example.notesproject.models.User;
+import org.example.notesproject.security.JwtUtil;
+import org.example.notesproject.service.contracts.RefreshTokenService;
 import org.example.notesproject.service.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin("http://localhost:5173")
+//@CrossOrigin("http://localhost:5173")
 public class AuthController {
     private final UserService userService;
-    private final AuthenticationHelper authenticationHelper;
+    private final AuthenticationManager authManager;
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenService refService;
 
     @Autowired
-    public AuthController(UserService userService, AuthenticationHelper authenticationHelper) {
+    public AuthController(UserService userService, AuthenticationManager authManager, JwtUtil jwtUtil,
+                          RefreshTokenService refService) {
         this.userService = userService;
-        this.authenticationHelper = authenticationHelper;
-    }
-
-    @GetMapping("/register")
-    public ResponseEntity<?> getRegisterInfo() {
-        return ResponseEntity.ok("Please POST your registration details to /api/auth/register");
+        this.authManager = authManager;
+        this.jwtUtil = jwtUtil;
+        this.refService = refService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody UserInDTO userInDTO, BindingResult bindingResult, HttpSession session) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserInDTO dto, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
         }
-
-        /*if (!userInDTO.getPassword().equals(userInDTO.getConfirmPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords should match.");
-        }*/
-
-        try {
-            User createdUser = userService.create(userInDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } catch (DuplicateEntityException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (EmailException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(dto));
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<?> getLoginInfo() {
-        return ResponseEntity.ok("Please POST your login details to /api/auth/register");
-    }
+
 
     @PostMapping("/login")
-    public ResponseEntity<?> handleLogin(@Valid @RequestBody UserInDTO userInDTO, BindingResult bindingResult, HttpSession session) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
-        }
-        try{
-            User user = authenticationHelper.throwIfWrongAuthentication(userInDTO.getUsername(), userInDTO.getPassword());
-            session.setAttribute("currentUser", user);
-            session.setAttribute("userId", user.getId());
-            return ResponseEntity.ok(user);
-        } catch (AuthenticationFailureException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
+    public ResponseEntity<?> handleLogin(@RequestBody LoginRequest loginRequest) {
+        Authentication auth = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        User user = userService.findByUsername(loginRequest.getUsername());
+        String access = jwtUtil.generateToken((UserDetails) auth.getPrincipal());
+        RefreshToken rt = refService.create(user);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", rt.getToken())
+                .httpOnly(true).secure(true).sameSite("None")
+                .path("/api/auth")
+                .maxAge(Duration.ofDays(30)).build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new LoginResponse(access));
+    }
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@CookieValue("refreshToken") String token) {
+        User user = refService.verify(token);
+        refService.delete(token);
+        RefreshToken newRt = refService.create(user);
+        String access = jwtUtil.generateToken(
+                org.springframework.security.core.userdetails.User
+                        .withUsername(user.getUsername())
+                        .password(user.getPasswordHash())
+                        .authorities(List.of())
+                        .build());
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", newRt.getToken())
+                .httpOnly(true).secure(true).sameSite("None")
+                .path("/api/auth")
+                .maxAge(Duration.ofDays(30)).build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new RefreshResponse(access));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseEntity.ok("Logged out successfully.");
+    public ResponseEntity<Void> logout(@CookieValue("refreshToken") String token) {
+        refService.delete(token);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true).secure(true).sameSite("None")
+                .path("/api/auth")
+                .maxAge(0).build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 }
 
