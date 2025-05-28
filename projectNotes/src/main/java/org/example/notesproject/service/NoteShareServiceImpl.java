@@ -55,6 +55,6 @@ public class NoteShareServiceImpl implements NoteShareService {
 
     @Override
     public List<NoteShare> sharedToMe(Integer userId) {
-        return List.of();
+        return shareRepo.findAllBySharedWithIdAndConfirmedTrue(userId);
     }
 }

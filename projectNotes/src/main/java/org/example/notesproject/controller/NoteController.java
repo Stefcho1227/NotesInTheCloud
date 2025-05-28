@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {
@@ -51,10 +51,4 @@ public class NoteController {
         noteService.delete(id);
     }
 
-    /* ---------- (Optional) Access via public slug ---------- */
-    // If you later add noteService.findBySlug(String slug), expose it like this:
-    // @GetMapping("/public/{slug}")
-    // public ResponseEntity<Note> findBySlug(@PathVariable String slug) {
-    //     return ResponseEntity.ok(noteService.findBySlug(slug));
-    // }
 }

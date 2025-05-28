@@ -1,5 +1,6 @@
 package org.example.notesproject.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class RefreshToken {
     private LocalDateTime expiryDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
+    @JsonBackReference
     private User user;
 
     public RefreshToken() {

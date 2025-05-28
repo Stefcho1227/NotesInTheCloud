@@ -1,5 +1,6 @@
 package org.example.notesproject.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,9 +33,13 @@ public class User {
     private LocalDateTime lastLoginAt;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private List<Note> notes = new ArrayList<>();
+    @OneToMany(mappedBy = "sharedWith", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<NoteShare> sharedNotes = new ArrayList<>();
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     private List<TodoItem> todoItems = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
 
@@ -111,5 +116,13 @@ public class User {
 
     public void setNotes(List<Note> notes) {
         this.notes = notes;
+    }
+
+    public List<NoteShare> getSharedNotes() {
+        return sharedNotes;
+    }
+
+    public void setSharedNotes(List<NoteShare> sharedNotes) {
+        this.sharedNotes = sharedNotes;
     }
 }

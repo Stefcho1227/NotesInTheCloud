@@ -1,6 +1,7 @@
 package org.example.notesproject.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.example.notesproject.enums.Permission;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,6 +23,7 @@ public class NoteShare {
 
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "shared_with_id")
+    @JsonBackReference
     private User sharedWith;
 
     @Enumerated(EnumType.STRING)
