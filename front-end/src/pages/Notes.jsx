@@ -2,29 +2,41 @@ import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import NoteList from "../components/NoteList";
 import NoteEditor from "../components/NoteEditor";
+import ToDoList from "../components/ToDoList";
+import ToDoEditor from "../components/ToDoEditor";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog.jsx";
 import "../App.css";
 import {
     fetchNotes,
     createNote,
     updateNote,
-    deleteNote} from "../api/notesApi.js";
+    deleteNote } from "../api/notesApi.js";
+
+import {
+    fetchToDos,
+    createToDo,
+    updateToDo,
+    deleteToDo } from "../api/toDosApi.js";
 
 const LOGGED_USER_ID = 1; // To be replaced with id from session
 
 function Notes() {
     const [activeTab, setActiveTab] = useState('notes');
     const [notes, setNotes] = useState([]);
-    //const [todos, setTodos] = useState({});
     const [activeNote, setActiveNote] = useState(null);
+    const [toDos, setToDos] = useState([]);
+    const [activeToDo, setActiveToDo] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [noteToDelete, setNoteToDelete] = useState(null);
+    const [toDoToDelete, setToDoToDelete] = useState(null);
 
     useEffect(() => {
         fetchNotes().then(res => setNotes(res.data))
             .catch((err) => console.error("Could not load notes", err));
 
+        fetchToDos().then(res => setToDos(res.data))
+            .catch((err) => console.error("Could not load to-dos", err));
     }, []);
 
     const filteredNotes = notes.filter(note =>
@@ -51,9 +63,35 @@ function Notes() {
             }
         }
         else {
-            // Add logic for adding a new todo item
+            try {
+                const res = await createToDo({
+                    id: Date.now(),
+                    title: '',
+                    completed: false,
+                    reminder: null
+                });
+                const newToDo = res.data;
+                setToDos([newToDo, ...toDos]);
+                setActiveToDo(newToDo);
+                setIsEditing(true);
+            } catch (err) {
+                console.error("Could not create To-do", err);
+            }
         }
     };
+
+    const handleSetReminder = (id) => {
+        const reminderTime = prompt("Enter time for reminder");
+        if (reminderTime){
+            const updatedToDos = toDos.map(toDo => toDo.id === id ? {...toDo,reminder: reminderTime} : toDo);
+            setToDos(updatedToDos);
+        }
+    };
+
+    const handleToggleToDo = (id) => {
+        const updated = toDos.map(toDo => toDo.id === id ? {...toDo,completed: !toDo.completed} : toDo);
+        setToDos(updated);
+    }
 
     const handleUpdateNote = async (localNote) => {
         try {
@@ -75,9 +113,47 @@ function Notes() {
         }
     };
 
+    const handleUpdateToDo = async(localToDo) => {
+        try{
+            const payload = {
+                title: localToDo.title,
+                completed: localToDo.completed,
+                reminder: localToDo.reminder ?? null
+            };
+
+            const res = await updateToDo(localToDo.id, payload);
+            const saved = res.data;
+
+            setToDos(toDos.map(toDo => (toDo.id === saved.id ? saved : toDo)));
+            setActiveToDo(saved);
+            setIsEditing(true);
+        } catch (err) {
+            console.error("Could not update To-Do", err);
+        }
+    };
+
+    const handleDeleteToDo = (id) => {
+        const toDo = toDos.find(toDo => toDo.id === id);
+        setToDoToDelete(toDo);
+    };
+
+    const confirmDeleteToDo = async () => {
+        try {
+            await deleteToDo(toDoToDelete.id);
+            setToDos(toDos.filter(toDo => toDo.id !== toDoToDelete.id));
+            if (activeToDo?.id === toDoToDelete.id) {
+                setActiveToDo(null);
+                setIsEditing(false);
+            }
+        } catch (err) {
+            console.error("Could not delete to-do", err);
+            alert("Delete failed");
+        }
+        setToDoToDelete(null);
+    };
+
     const handleDeleteNote = (id) => {
-        const note = notes.find(note => note.id === id)
-        setNoteToDelete(note);
+        setNoteToDelete(notes.find(note => note.id === id));
     };
 
     const confirmDelete = async () => {
@@ -94,6 +170,7 @@ function Notes() {
         }
         setNoteToDelete(null);
     };
+
     const handleNoteSelect = (note) => {
         if (activeNote && activeNote.id === note.id) {
             setActiveNote(null);
@@ -107,6 +184,7 @@ function Notes() {
 
     const handleCancelEdit = () => {
         setActiveNote(null);
+        setActiveToDo(null);
         setIsEditing(false);
     };
 
@@ -118,36 +196,66 @@ function Notes() {
 
             <div className='mainContent'>
                 {activeTab === 'notes' ? (
-                    <div className='mainContent'>
+                    <>
                         <NoteList
                             notes={filteredNotes}
                             activeNote={activeNote}
                             onNoteSelect={handleNoteSelect}
                             onNoteDelete={handleDeleteNote}
-                            onSearch={setSearchTerm}/>
+                            onSearch={setSearchTerm}
+                        />
 
-                        {activeNote &&
+                        {activeNote && (
                             <NoteEditor
                                 note={activeNote}
                                 onUpdateNote={handleUpdateNote}
-                                onCancel={handleCancelEdit}/>
-                        }
-                    </div>
+                                onCancel={handleCancelEdit}
+                            />
+                        )}
+                    </>
                 ) : (
-                    <div/* To-Do List Component *//>
+                    <>
+                        <ToDoList
+                            toDos = {toDos}
+                            onToggle={handleToggleToDo}
+                            onDelete={handleDeleteToDo}
+                            onEdit={setActiveToDo}
+                            onReminder={handleSetReminder}
+                        />
+
+                        {activeToDo && (
+                            <ToDoEditor
+                                toDo={activeToDo}
+                                onSave={handleUpdateToDo}
+                                onCancel={handleCancelEdit}
+                            />
+                        )}
+                    </>
                 )}
 
-                {!isEditing && (<button
-                    className='fab'
-                    onClick={handleAddItem}>+</button>)}
+                {!isEditing && (
+                    <button
+                        className='fab'
+                        onClick={handleAddItem}>+
+                    </button>
+                )}
             </div>
+
             <DeleteConfirmationDialog
                 isOpen={!!noteToDelete}
                 onConfirm={confirmDelete}
                 onCancel={() => setNoteToDelete(null)}
-                noteTitle={noteToDelete?.title || ''}/>
+                noteTitle={noteToDelete?.title || ''}
+            />
+
+            <DeleteConfirmationDialog
+                isOpen={!!toDoToDelete}
+                onConfirm={confirmDeleteToDo}
+                onCancel={() => setToDoToDelete(null)}
+                noteTitle={toDoToDelete?.title || ''}
+            />
         </div>
     );
-};
+}
 
 export default Notes;

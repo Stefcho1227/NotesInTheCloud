@@ -1,16 +1,10 @@
 package org.example.notesproject.controller;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.example.notesproject.dtos.in.LoginRequest;
-import org.example.notesproject.dtos.in.RegisterRequest;
 import org.example.notesproject.dtos.in.UserInDTO;
 import org.example.notesproject.dtos.out.LoginResponse;
 import org.example.notesproject.dtos.out.RefreshResponse;
-import org.example.notesproject.exception.AuthenticationFailureException;
-import org.example.notesproject.exception.DuplicateEntityException;
-import org.example.notesproject.exception.EmailException;
-import org.example.notesproject.helpers.AuthenticationHelper;
 
 import org.example.notesproject.models.RefreshToken;
 import org.example.notesproject.models.User;
@@ -26,7 +20,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 

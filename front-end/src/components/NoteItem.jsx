@@ -11,7 +11,7 @@ const NoteItem = ({note, isActive, onSelect, onDelete}) => {
 
     return (
         <div className={`noteItem ${isActive ? 'active': ''} `}
-        onClick={() => onSelect(note)}>
+             onClick={() => onSelect(note)}>
             <div className="noteItemHeader">
                 <h3>{note.title}</h3>
                 <button className="deleteBtn" onClick={handleDelete}>

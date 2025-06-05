@@ -219,6 +219,66 @@ button:disabled {
     margin-bottom: 1rem;
 }
 
+.toDoList {
+    flex: 1;
+    background-color: white;
+    overflow-y: auto;
+    border-left: 1px solid #e0e0e0;
+    padding: 0;
+}
+
+.toDoItem {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+}
+
+.toDoItem:hover {
+    background-color: #f9f9f9;
+}
+
+.toDoItem.completed .toDoTitle {
+    text-decoration: line-through;
+    color: #9e9e9e;
+}
+
+.toDoItem.active {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    border-color: #aaa;
+}
+
+.toDoItem .noteItemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.toDoTitle {
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.toDoActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.reminderBtn {
+    background: none;
+    border: 1px solid #4285f4;
+    color: #4285f4;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.reminderBtn:hover {
+    background-color: #e3f2fd;
+}
+
 .editorActions {
     display: flex;
     justify-content: flex-end;
