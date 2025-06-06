@@ -22,7 +22,7 @@ export default function ToDoEditorPage() {
     const handleUpdateToDo = async (updatedToDo) => {
         try {
             await updateToDo(updatedToDo.id, updatedToDo);
-            navigate('/todos');
+            navigate('/app/todos');
         } catch (err) {
             console.error("Could not update to-do", err);
             alert("Failed to update to-do");
@@ -30,7 +30,7 @@ export default function ToDoEditorPage() {
     };
 
     const handleCancel = () => {
-        navigate('/todos');
+        navigate('/app/todos');
     };
 
     if (toDo.error) {

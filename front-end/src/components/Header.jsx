@@ -5,8 +5,8 @@ import { NavLink } from "react-router";
 const Header = () => {
     return (
         <header className='appHeader'>
-            <NavLink to='/notes'>Notes List</NavLink>
-            <NavLink to='/todos'>To-Do List</NavLink>
+            <NavLink to='/app/notes'>Notes List</NavLink>
+            <NavLink to='/app/todos'>To-Do List</NavLink>
         </header>
     );
 };

@@ -13,9 +13,9 @@ function Notes() {
     const handleAddItem = () => {
         const path = window.location.pathname;
         if (path.includes('notes')) {
-            navigate('/notes/new');
+            navigate('/app/notes/new');
         } else if (path.includes('todos')) {
-            navigate('/todos/new');
+            navigate('/app/todos/new');
         }
     };
 

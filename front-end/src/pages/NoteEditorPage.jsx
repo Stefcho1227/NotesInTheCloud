@@ -12,7 +12,7 @@ export default function NoteEditorPage() {
     const handleUpdateNote = async (updatedNote) => {
         try {
             await updateNote(updatedNote.id, updatedNote);
-            navigate('/notes');
+            navigate('/app/notes');
         } catch (err) {
             console.error("Could not update note", err);
             alert("Failed to update note");
@@ -20,7 +20,7 @@ export default function NoteEditorPage() {
     };
 
     const handleCancel = () => {
-        navigate('/notes');
+        navigate('/app/notes');
     };
 
     if (note.error) {

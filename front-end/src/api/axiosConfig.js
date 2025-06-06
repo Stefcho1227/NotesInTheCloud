@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { refreshToken } from './authApi';
 
-const API_ROOT = import.meta.env.VITE_API_ROOT;
+const API_ROOT = 'http://localhost:8080/api'
 
 const api = axios.create({
     baseURL: API_ROOT,

@@ -1,6 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { fetchNote, fetchNotes } from "./api/notesApi.js";
 import { fetchToDo, fetchToDos } from "./api/toDosApi.js";
+
+
 import ProtectedRoute from "./layouts/ProtectedRoutes";
 import LogIn from "./pages/LogIn";
 import Register from "./pages/Register";
@@ -36,12 +38,22 @@ const router = createBrowserRouter([
                         loader: async () => {
                             try {
                                 const response = await fetchNotes();
+                                console.log(response);
+
+                                // Ensure the response data is an array
+                                if (!Array.isArray(response.data)) {
+                                    throw new Error("Invalid data format - expected array");
+                                }
+
                                 if (response.statusText !== 'OK') {
                                     throw new Error("Could not load notes");
                                 }
+
+                                console.log(response.data);
                                 return response.data;
                             } catch (error) {
-                                return { error: error.message };
+                                console.log(error.message);
+                                return []; // Return empty array on error
                             }
                         },
                     },
@@ -70,12 +82,13 @@ const router = createBrowserRouter([
                         loader: async () => {
                             try {
                                 const response = await fetchToDos();
-                                if (response.statusText !== 'OK') {
+                                if (response.statusText !== 'OK' || !Array.isArray(response.data)) {
                                     throw new Error("Could not load to-dos");
                                 }
                                 return response.data;
                             } catch (error) {
-                                return { error: error.message };
+                                console.log(error.message);
+                                return [];
                             }
                         },
                     },

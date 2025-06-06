@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
+import {register as reg} from "../api/authApi.js";
 import axios from "axios";
 import "../Auth.css";
 
@@ -22,8 +23,8 @@ function Register() {
 
     const onSubmit = async (data) => {
         try {
-            await axios.post(`${import.meta.env.VITE_API_ROOT}/auth/register`, data);
-            navigate("/notes");
+            await reg( data);
+            navigate("/app/notes");
         } catch (err) {
             setError("Registration failed. Please try again.");
         }

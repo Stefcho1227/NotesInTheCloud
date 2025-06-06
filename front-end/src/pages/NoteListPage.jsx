@@ -2,19 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useLoaderData } from "react-router";
 import NoteList from "../components/NoteList.jsx";
-import { fetchNotes } from "../api/notesApi.js";
 
-export async function loader() {
-    try {
-        const response = await fetchNotes();
-        if (response.statusText !== 'OK') {
-            throw new Error("Could not load notes");
-        }
-        return response.data;
-    } catch (error) {
-        return { error: error.message };
-    }
-}
+
 
 export default function NoteListPage() {
     const loaderData = useLoaderData();
