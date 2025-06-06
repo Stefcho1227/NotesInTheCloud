@@ -1,22 +1,12 @@
+// Header.jsx
 import React from "react";
-const Header = ({activeTab, onTabChange}) => {
+import { NavLink } from "react-router";
 
+const Header = () => {
     return (
         <header className='appHeader'>
-            <div>
-
-            <div className='tabs'>
-                <button className={activeTab === 'notes' ? 'active' : ''}
-                onClick={() => onTabChange('notes')}>
-                    Notes
-                </button>
-
-                <button className={activeTab === 'todos' ? 'active' : ''}
-                onClick={() => onTabChange('todos')}>
-                    To-Do
-                </button>
-            </div>
-            </div>
+            <NavLink to='/notes'>Notes List</NavLink>
+            <NavLink to='/todos'>To-Do List</NavLink>
         </header>
     );
 };
