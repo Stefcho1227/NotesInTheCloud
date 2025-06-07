@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface NoteShareRepository extends JpaRepository<NoteShare, Integer> {
     Optional<NoteShare> findByConfirmToken(String token);
     List<NoteShare> findAllBySharedWithIdAndConfirmedTrue(Integer userId);
+    Optional<NoteShare> findByNoteIdAndSharedWithId(Integer noteId, Integer sharedWithId);
 }

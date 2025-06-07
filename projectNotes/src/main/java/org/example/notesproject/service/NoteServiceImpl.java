@@ -1,14 +1,20 @@
 package org.example.notesproject.service;
 
 import org.example.notesproject.dtos.in.NoteInDTO;
+import org.example.notesproject.enums.Permission;
 import org.example.notesproject.mappers.NoteMapper;
 import org.example.notesproject.models.Note;
 import org.example.notesproject.models.User;
 import org.example.notesproject.repository.NoteRepository;
+import org.example.notesproject.repository.NoteShareRepository;
 import org.example.notesproject.repository.UserRepository;
 import org.example.notesproject.service.contracts.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -23,12 +29,14 @@ public class NoteServiceImpl implements NoteService {
     private final NoteRepository noteRepository;
     private final UserRepository userRepository;
     private final NoteMapper noteMapper;
-    private static final String BASE_URL = "api/notes/";
+    private final NoteShareRepository noteShareRepository;
+
     @Autowired
-    public NoteServiceImpl(NoteRepository noteRepository, NoteMapper noteMapper, UserRepository userRepository){
+    public NoteServiceImpl(NoteRepository noteRepository, NoteMapper noteMapper, UserRepository userRepository, NoteShareRepository noteShareRepository){
         this.noteRepository = noteRepository;
         this.noteMapper = noteMapper;
         this.userRepository = userRepository;
+        this.noteShareRepository = noteShareRepository;
     }
     @Override
     public Note create(NoteInDTO noteInDTO) {
@@ -54,16 +62,19 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    @Transactional
     public Note update(Integer id, NoteInDTO noteInDTO) {
+        Integer userId = getCurrentUserId();
         Note noteToUpdate = find(id);
-        //Boolean wasPublic = noteToUpdate.getIsPublic();
+        boolean isOwner = noteToUpdate.getOwner().getId().equals(userId);
+        boolean isSharedWithEdit = noteShareRepository
+                .findByNoteIdAndSharedWithId(id, userId)
+                .map(share -> share.getPerm() == Permission.EDIT)
+                .orElse(false);
+        if (!isOwner && !isSharedWithEdit) {
+            throw new AccessDeniedException("You do not have permission to edit this note");
+        }
         noteMapper.updateDto(noteToUpdate, noteInDTO);
-//        if (Boolean.TRUE.equals(noteInDTO.getIsPublic()) && !Boolean.TRUE.equals(wasPublic)) {
-//            String secureSlug = generateSecureSlug(id);
-//            noteToUpdate.setPublicSlug(BASE_URL + "{" + secureSlug + "}");
-//        } else if (!Boolean.TRUE.equals(noteInDTO.getIsPublic()) && Boolean.TRUE.equals(wasPublic)) {
-//            noteToUpdate.setPublicSlug(null);
-//        }
         return noteRepository.save(noteToUpdate);
     }
 
@@ -77,14 +88,11 @@ public class NoteServiceImpl implements NoteService {
         return noteRepository.findByOwner_Id(userId);
     }
 
-    private String generateSecureSlug(Integer noteId) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            String input = noteId.toString();
-            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(hash).substring(0, 16);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error generating secure slug", e);
+    private Integer getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetailsImpl userDetails) {
+            return userDetails.getId();
         }
+        throw new RuntimeException("User not authenticated");
     }
 }
