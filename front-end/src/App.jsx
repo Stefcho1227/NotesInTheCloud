@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { fetchNote, fetchNotes } from "./api/notesApi.js";
-import { fetchToDo, fetchToDos } from "./api/toDosApi.js";
+import {fetchToDo, fetchToDos, getReminders} from "./api/toDosApi.js";
 
 
 import ProtectedRoute from "./layouts/ProtectedRoutes";
@@ -75,10 +75,14 @@ const router = createBrowserRouter([
                         loader: async () => {
                             try {
                                 const response = await fetchToDos(getUID());
-                                if (response.status >= 400) {
+                                const resp = await getReminders();
+                                console.log('reminders: ',resp.data);
+                                if (response.status >= 400 || resp.status >= 400) {
                                     throw new Error("Could not load to-dos");
                                 }
-                                return response.data;
+                                const toReturn = response.data.map(todo=> {return {...todo, reminder:resp.data.find(rem => rem.todoItem.id === todo.id)}})
+                                console.log(toReturn);
+                                return toReturn;
                             } catch (error) {
                                 console.log(error.message);
                                 return [];
@@ -91,10 +95,13 @@ const router = createBrowserRouter([
                                 loader: async ({ params }) => {
                                     try {
                                         const response = await fetchToDo(params.id);
-                                        if (response.status >= 400) {
+                                        const resp = await getReminders();
+                                        if (response.status >= 400 || resp.status >= 400) {
                                             throw new Error("Could not load to-do");
                                         }
-                                        return response.data;
+                                        const toReturn = {...response.data, reminder:resp.data.find(rem => rem.todoItem.id === response.data.id)}
+                                        console.log(toReturn)
+                                        return toReturn;
                                     } catch (error) {
                                         return { error: error.message };
                                     }

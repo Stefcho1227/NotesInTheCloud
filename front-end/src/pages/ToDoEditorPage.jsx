@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useLoaderData } from "react-router";
+import { useNavigate, useLoaderData, useRevalidator } from "react-router";
 import ToDoEditor from "../components/ToDoEditor.jsx";
 import { createToDo, updateToDo, createReminder, updateReminder, deleteReminder } from "../api/toDosApi.js";
 import { getUID } from "../api/authApi.js";
@@ -7,6 +7,7 @@ import { getUID } from "../api/authApi.js";
 export default function ToDoEditorPage() {
     const toDo = useLoaderData();
     const navigate = useNavigate();
+    const { revalidate } = useRevalidator();
     const isNew = !toDo?.id;
 
     const handleSave = async (toDoData) => {
@@ -32,34 +33,32 @@ export default function ToDoEditorPage() {
                     }
                 }
             } else {
-                savedTodo = await updateToDo(toDoData.id, todoToSave);
-                // Handle reminder updates
-                if (toDoData.reminder) {
-                    try {
-                        if (toDo.reminder?.id) {
-                            await updateReminder(toDo.reminder.id, {
-                                remindAt: toDoData.reminder.remindAt,
-                                todoId: toDoData.id,
-                                creatorId: getUID()
-                            });
-                        } else {
-                            await createReminder({
-                                remindAt: toDoData.reminder.remindAt,
-                                todoId: toDoData.id,
-                                creatorId: getUID()
-                            });
-                        }
-                    } catch (reminderError) {
-                        console.error("Failed to update reminder", reminderError);
-                    }
-                } else if (toDo.reminder?.id) {
-                    try {
-                        await deleteReminder(toDo.reminder.id);
-                    } catch (deleteError) {
-                        console.error("Failed to delete reminder", deleteError);
-                    }
+                await updateToDo(toDoData.id, todoToSave);
+                const r = toDoData.reminder;       // shorter name
+                const hadReminder   = !!toDo.reminder?.id;   // from loader
+                const wantsReminder = !!r?.remindAt;         // after editing
+
+                if (wantsReminder && r.id) {
+                    // A) existed and user kept it → UPDATE
+                    await updateReminder(r.id, {
+                        remindAt: r.remindAt,
+                        todoId:   toDoData.id,
+                        creatorId: getUID()
+                    });
+                } else if (wantsReminder && !r.id) {
+                    // B) was absent and user added one → CREATE
+                    await createReminder({
+                        remindAt: r.remindAt,
+                        todoId:   toDoData.id,
+                        creatorId: getUID()
+                    });
+                } else if (!wantsReminder && hadReminder) {
+                    // C) user cleared the field → DELETE
+                    await deleteReminder(toDo.reminder.id);
+
                 }
             }
+            await revalidate();
             navigate('/app/todos', { replace: true });
         } catch (err) {
             console.error("Could not save to-do", err);

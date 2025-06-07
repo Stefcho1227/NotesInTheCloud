@@ -22,3 +22,14 @@
 .appHeader a.active {
     background-color: #4CAF50;
 }
+
+.logoutBtn {
+    background: none;
+    border: none;
+    color: var(--link-color, #0366d6);
+    cursor: pointer;
+    font: inherit;
+    margin-left: 1rem;
+    padding: 0;
+}
+.logoutBtn:hover { text-decoration: underline; }

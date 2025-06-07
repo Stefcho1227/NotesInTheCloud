@@ -45,3 +45,11 @@ body {
     color: #666;
     font-style: italic;
 }
+
+.todos-container{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+
+}

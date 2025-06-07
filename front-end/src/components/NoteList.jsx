@@ -11,8 +11,6 @@ const NoteList = ({ notes, activeNote, onNoteSelect, onNoteDelete, onSearch }) =
         onSearch(e.target.value);
     };
 
-    console.log(notes[0].id)
-
     return (
         <ul className="noteList">
             <input

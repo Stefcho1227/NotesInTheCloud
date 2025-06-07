@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { createShare } from "../api/shareApi";
 import './NoteEditor.css'
+import UserPickerDialog from "./UserPickerDialog";
 
 const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [isPublic, setIsPublic] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
+    const [showPicker, setShowPicker] = useState(false);
+    const [shareBusy,  setShareBusy]  = useState(false);
 
     useEffect(() => {
         if (note) {
@@ -18,11 +21,10 @@ const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
     useEffect(() => {
         const changesExist = (
             title !== (note?.title || '') ||
-            content !== (note?.content || '') ||
-            isPublic !== (note?.isPublic || false)
+            content !== (note?.content || '')
         );
         setHasChanges(changesExist);
-    }, [title, content, isPublic, note]);
+    }, [title, content, note]);
 
     const handleSave = async () => {
         if (!title.trim()) {
@@ -35,8 +37,7 @@ const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
             await onUpdateNote({
                 ...(note || {}), // Include existing fields if editing
                 title: title.trim(),
-                content,
-                isPublic
+                content
             });
         } finally {
             setIsSaving(false);
@@ -69,15 +70,34 @@ const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
                 </div>
 
                 <div className="formGroup">
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={isPublic}
-                            onChange={(e) => setIsPublic(e.target.checked)}
-                        />
-                        Make note public
-                    </label>
-                </div>
+                       <button
+                         type="button"
+                         className="shareBtn"
+                         disabled={isSaving || isNew || shareBusy}
+                         onClick={() => setShowPicker(true)}
+                       >
+                         Share
+                       </button>
+                 </div>
+
+             {showPicker && (
+               <UserPickerDialog
+                 onClose={() => setShowPicker(false)}
+                 onSelect={async (user) => {
+                   if (!note?.id) return;        // safety guard
+                   setShareBusy(true);
+                   try {
+                     await createShare(note.id, user.id, "read");
+                     alert(`Shared with ${user.username}`);
+                   } catch (e) {
+                     alert("Failed to share");
+                   } finally {
+                     setShareBusy(false);
+                     setShowPicker(false);
+                   }
+                 }}
+               />
+             )}
 
                 <div className="editorActions">
                     <button

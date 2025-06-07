@@ -4,25 +4,32 @@ import {getCurrentUser, getUID} from "../api/authApi.js";
 
 const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
     const [text, setText] = useState('');
-    const [reminder, setReminder] = useState('');
+    const [reminder, setReminder] = useState({ id: null, remindAt: '' });
     const [isDone, setIsDone] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
 
     useEffect(() => {
         if (toDo) {
+            console.log(toDo.reminder)
             setText(toDo.text || '');
-            setReminder(toDo.reminder?.remindAt || '');
+            setReminder({
+                id:       toDo.reminder?.id ?? null,
+                remindAt: toDo.reminder?.remindAt ?? ''
+              });
             setIsDone(toDo.isDone || false);
         }
     }, [toDo]);
 
     useEffect(() => {
-        const changesExist = (
-            text !== (toDo?.text || '') ||
-            reminder !== (toDo?.reminder?.remindAt || '') ||
-            isDone !== (toDo?.isDone || false)
-        );
+        const originalText = toDo?.text   ?? '';
+        const originalDone = toDo?.isDone ?? false;
+        const originalRemindAt = toDo?.reminder?.remindAt ?? '';
+
+        const changesExist =
+            text !== originalText ||
+            isDone !== originalDone ||
+            reminder.remindAt !== originalRemindAt;
         setHasChanges(changesExist);
     }, [text, reminder, isDone, toDo]);
 
@@ -35,15 +42,12 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
         setIsSaving(true);
         try {
             const payload = {
-                id: toDo.id,
-                text: text.trim(),
-                isDone,
-                reminder: reminder ? {
-                    todoId: toDo.id,
-                    remindAt: new Date(reminder).toISOString(),
-                    creatorId: getUID()
-                } : null
-            };
+                    id: toDo.id,
+                    text: text.trim(),
+                    isDone,
+               reminder: reminder.remindAt
+                 ? {id:reminder.id, remindAt: reminder.remindAt} : null             // input is empty => delete if it existed
+        };
             await onSave(payload);
         } finally {
             setIsSaving(false);
@@ -75,10 +79,13 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
                     <label>Reminder:</label>
                     <input
                         type="datetime-local"
-                        step='60'
-                        value={formatDateTimeLocal(reminder)}
-                        onChange={(e) => setReminder(e.target.value)}
+                        step="60"
+                        value={reminder.remindAt}
+                        onChange={e =>
+                            setReminder(r => ({ ...r, remindAt: e.target.value }))
+                        }
                     />
+
                 </div>
 
                 <div className="formGroup">

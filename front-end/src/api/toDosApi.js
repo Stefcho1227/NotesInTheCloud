@@ -6,6 +6,8 @@ export const createToDo = (toDo) => api.post('/todoItems', toDo);
 export const updateToDo = (id, toDo) => api.put(`/todoItems/${id}`, toDo);
 export const deleteToDo = (id) => api.delete(`/todoItems/${id}`);
 
+export const getReminders = () => api.get('/reminders');
+
 // Reminder endpoints
 export const createReminder = (reminderData) => {
     const formattedData = {

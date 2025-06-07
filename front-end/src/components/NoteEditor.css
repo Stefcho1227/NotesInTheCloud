@@ -79,3 +79,8 @@
     opacity: 0.6;
     cursor: not-allowed;
 }
+.shareBtn{
+    background:#0a7dff;color:#fff;border:none;padding:.4rem .8rem;border-radius:4px;cursor:pointer
+}
+.shareBtn:disabled{opacity:.5;cursor:not-allowed}
+

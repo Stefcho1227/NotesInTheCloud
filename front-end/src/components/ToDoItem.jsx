@@ -19,7 +19,7 @@ const ToDoItem = ({toDo, onDelete, onEdit}) => {
     };
 
     return (
-        <div className={`toDoItem ${toDo.isDone ? 'completed': ''}`}
+        <div className={`toDoItem ${toDo.done ? 'completed': ''}`}
              onClick={handleEdit}>
             <div className="toDoItemHeader">
                 <span className='toDoTitle'>{toDo.text || 'Untitled To-do'}</span>
@@ -29,7 +29,7 @@ const ToDoItem = ({toDo, onDelete, onEdit}) => {
             </div>
 
             {formattedDate && <p className="noteDate">{formattedDate}</p>}
-            {toDo.isDone && <p className="completedStatus">Completed</p>}
+            {toDo.done && <p className="completedStatus">Completed</p>}
             {toDo.reminder?.remindAt && (
                 <p className="reminderStatus">
                     Reminder: {new Date(toDo.reminder.remindAt).toLocaleString()}

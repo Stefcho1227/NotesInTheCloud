@@ -15,7 +15,10 @@ const NoteItem = ({ note, isActive, onSelect, onDelete }) => {
         <div className={`noteItem ${isActive ? 'active' : ''}`}
              onClick={() => onSelect(note)}>
             <div className="noteItemHeader">
-                <h3>{note.title}</h3>
+                <h3>{note.title}
+                    {note.shared && <span className="sharedBadge">• shared</span>}
+                </h3>
+
                 <button className="deleteBtn" onClick={handleDelete}>
                     X
                 </button>

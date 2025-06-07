@@ -7,7 +7,7 @@ export default function ToDoListPage() {
     const loaderData = useLoaderData();
     const [activeToDoId, setActiveToDoId] = useState(null);
     const navigate = useNavigate();
-
+    console.log(loaderData);
     const handleDelete = async (id) => {
         try {
             await deleteToDo(id);

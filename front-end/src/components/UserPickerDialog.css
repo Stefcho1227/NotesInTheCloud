@@ -1,0 +1,7 @@
+.up-backdrop{position:fixed;inset:0;background:#0006;display:flex;align-items:center;justify-content:center;z-index:999}
+.up-modal{background:#fff;padding:1.5rem 2rem;border-radius:6px;min-width:260px;max-height:80vh;display:flex;flex-direction:column}
+.up-search{margin-bottom:.75rem}
+.up-list{list-style:none;padding:0;margin:0;overflow:auto}
+.up-list li{padding:.4rem .2rem;cursor:pointer;border-bottom:1px solid #eee}
+.up-list li:hover{background:#f1f5ff}
+.up-close{margin-top:.75rem;align-self:flex-end}
