@@ -36,8 +36,10 @@ public class User {
     @OneToMany(mappedBy = "sharedWith", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<NoteShare> sharedNotes = new ArrayList<>();
+
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
     private List<TodoItem> todoItems = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<RefreshToken> refreshTokens = new ArrayList<>();
