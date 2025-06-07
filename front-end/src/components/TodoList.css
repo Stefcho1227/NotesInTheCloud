@@ -1,4 +1,9 @@
-/* ToDoList.css */
+.toDoListContainer {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
 .toDoList {
     list-style: none;
     padding: 0;
@@ -7,6 +12,7 @@
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
 
 .toDoItem {
@@ -17,13 +23,11 @@
 }
 
 .toDoItem:hover {
-    background-color: #f9f9f9;
+    background-color: #f5f5f5;
 }
 
 .toDoItem.completed {
-    background-color: #f5f5f5;
-    text-decoration: line-through;
-    color: #999;
+    background-color: #f0f8ff;
 }
 
 .toDoItemHeader {
@@ -32,16 +36,8 @@
     align-items: center;
 }
 
-.toDoItemHeader label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    flex: 1;
-}
-
 .toDoTitle {
-    margin: 0;
+    font-weight: 500;
 }
 
 .toDoActions {
@@ -49,28 +45,30 @@
     gap: 10px;
 }
 
-.toDoActions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.reminderBtn {
-    color: #2196F3;
-}
-
 .deleteBtn {
-    color: #f44336;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
 }
 
-.noteDate {
-    margin: 5px 0 0 0;
-    font-size: 12px;
-    color: #999;
+.noteDate, .completedStatus {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
 }
 
-.todos-container {
-    display: flex;
-    gap: 20px;
+.emptyState {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+}
+
+.reminderStatus {
+    font-size: 0.8em;
+    color: #ff6b6b;
+    margin-top: 5px;
+    font-weight: bold;
 }

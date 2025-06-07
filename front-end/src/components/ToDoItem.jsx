@@ -1,11 +1,12 @@
 import React from "react";
+import "./ToDoList.css";
 
-const ToDoItem = ({toDo, onToggle, onDelete, onEdit, onReminder}) => {
+const ToDoItem = ({toDo, onDelete, onEdit}) => {
     const formattedDate = toDo.updatedAt
         ? new Date(toDo.updatedAt).toLocaleString()
-        : toDo.reminder
-        ? new Date(toDo.reminder).toLocaleString()
-        : '';
+        : toDo.reminder?.remindAt
+            ? new Date(toDo.reminder.remindAt).toLocaleString()
+            : '';
 
     const handleDelete = (e) => {
         e.stopPropagation();
@@ -17,33 +18,23 @@ const ToDoItem = ({toDo, onToggle, onDelete, onEdit, onReminder}) => {
         onEdit(toDo.id);
     };
 
-    const handleReminder = (e) => {
-        e.stopPropagation();
-        onReminder(toDo.id);
-    };
-
     return (
-        <div className={`toDoItem ${toDo.completed ? 'completed': ''} `}
+        <div className={`toDoItem ${toDo.isDone ? 'completed': ''}`}
              onClick={handleEdit}>
             <div className="toDoItemHeader">
-                <label>
-                    <input
-                        type='checkbox'
-                        checked={toDo.completed}
-                        onChange={() => onToggle(toDo.id)}
-                        onClick={(e) => e.stopPropagation()}
-                    />
-                    <span className='toDoTitle'>{toDo.text || 'Untitled To-do'}</span>
-                </label>
-
+                <span className='toDoTitle'>{toDo.text || 'Untitled To-do'}</span>
                 <div className='toDoActions'>
-                    <button className="reminderBtn" onClick={handleReminder}>Reminder</button>
                     <button className="deleteBtn" onClick={handleDelete}>X</button>
                 </div>
             </div>
 
             {formattedDate && <p className="noteDate">{formattedDate}</p>}
-
+            {toDo.isDone && <p className="completedStatus">Completed</p>}
+            {toDo.reminder?.remindAt && (
+                <p className="reminderStatus">
+                    Reminder: {new Date(toDo.reminder.remindAt).toLocaleString()}
+                </p>
+            )}
         </div>
     );
 };

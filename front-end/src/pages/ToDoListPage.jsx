@@ -1,28 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate, Outlet } from "react-router";
 import ToDoList from "../components/ToDoList.jsx";
-import { fetchToDos } from "../api/toDosApi.js";
-
+import { deleteToDo } from "../api/toDosApi.js";
 
 export default function ToDoListPage() {
     const loaderData = useLoaderData();
     const [activeToDoId, setActiveToDoId] = useState(null);
     const navigate = useNavigate();
 
+    const handleDelete = async (id) => {
+        try {
+            await deleteToDo(id);
+            navigate('.', { replace: true });
+        } catch (err) {
+            console.error("Failed to delete todo:", err);
+            alert("Failed to delete todo. Please try again.");
+        }
+    };
+
     if (loaderData.error) {
         return <section>{loaderData.error}</section>;
     }
 
     const handleToDoSelect = (id) => {
-        navigate(`${id}`)
         setActiveToDoId(id);
+        navigate(`${id}`);
     };
-    console.log(loaderData);
+
     return (
         <div className="todos-container">
             <ToDoList
                 toDos={loaderData}
                 onEdit={handleToDoSelect}
+                onDelete={handleDelete}
             />
             <Outlet/>
         </div>

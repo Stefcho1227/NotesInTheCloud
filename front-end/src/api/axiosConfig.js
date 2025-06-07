@@ -11,9 +11,10 @@ const api = axios.create({
 // Add request interceptor to inject the access token
 api.interceptors.request.use((config) => {
     const token = getAccessToken();
-    console.log(token);
+    console.log('token: ', token)
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        config.headers['Content-Type'] = 'application/json'; // Ensure content-type is set
     }
     return config;
 });

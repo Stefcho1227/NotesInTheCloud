@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import './ToDoEditor.css'
+import {getCurrentUser, getUID} from "../api/authApi.js";
 
 const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
     const [text, setText] = useState('');
     const [reminder, setReminder] = useState('');
-    const [completed, setCompleted] = useState(false);
+    const [isDone, setIsDone] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
 
     useEffect(() => {
         if (toDo) {
             setText(toDo.text || '');
-            setReminder(toDo.reminder || '');
-            setCompleted(toDo.completed || false);
+            setReminder(toDo.reminder?.remindAt || '');
+            setIsDone(toDo.isDone || false);
         }
     }, [toDo]);
 
     useEffect(() => {
         const changesExist = (
             text !== (toDo?.text || '') ||
-            reminder !== (toDo?.reminder || '') ||
-            completed !== (toDo?.completed || false)
+            reminder !== (toDo?.reminder?.remindAt || '') ||
+            isDone !== (toDo?.isDone || false)
         );
         setHasChanges(changesExist);
-    }, [text, reminder, completed, toDo]);
+    }, [text, reminder, isDone, toDo]);
 
     const handleSave = async () => {
         if (!text.trim()) {
@@ -33,15 +34,26 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
 
         setIsSaving(true);
         try {
-            await onSave({
-                ...(toDo || {}), // Include existing fields if editing
+            const payload = {
+                id: toDo.id,
                 text: text.trim(),
-                reminder: reminder || null,
-                completed
-            });
+                isDone,
+                reminder: reminder ? {
+                    todoId: toDo.id,
+                    remindAt: new Date(reminder).toISOString(),
+                    creatorId: getUID()
+                } : null
+            };
+            await onSave(payload);
         } finally {
             setIsSaving(false);
         }
+    };
+
+    const formatDateTimeLocal = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toISOString().slice(0, 16);
     };
 
     return (
@@ -50,7 +62,7 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
 
             <div className="editorForm">
                 <div className="formGroup">
-                    <label>text:</label>
+                    <label>Text:</label>
                     <input
                         type="text"
                         value={text}
@@ -63,7 +75,8 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
                     <label>Reminder:</label>
                     <input
                         type="datetime-local"
-                        value={reminder}
+                        step='60'
+                        value={formatDateTimeLocal(reminder)}
                         onChange={(e) => setReminder(e.target.value)}
                     />
                 </div>
@@ -72,8 +85,8 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
                     <label>
                         <input
                             type="checkbox"
-                            checked={completed}
-                            onChange={(e) => setCompleted(e.target.checked)}
+                            checked={isDone}
+                            onChange={(e) => setIsDone(e.target.checked)}
                         />
                         Completed
                     </label>
