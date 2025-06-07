@@ -38,6 +38,7 @@ public class TodoItemController {
     public ResponseEntity<TodoItem> update(@PathVariable Integer id, @RequestBody @Valid TodoItemInDTO dto) {
         return ResponseEntity.ok(todoItemService.update(id, dto));
     }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Integer id) {

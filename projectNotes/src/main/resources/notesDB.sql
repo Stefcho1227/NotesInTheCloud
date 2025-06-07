@@ -53,7 +53,7 @@ CREATE TABLE refresh_tokens (
                                 id           INT AUTO_INCREMENT PRIMARY KEY,
                                 token        VARCHAR(64) NOT NULL UNIQUE,  -- UUID → 36 знака, 64 е повече от достатъчно
                                 expiry_date  TIMESTAMP   NOT NULL,
-                                user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
+                                user_   id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE UNIQUE INDEX idx_refresh_token_token ON refresh_tokens(token);
@@ -62,8 +62,7 @@ CREATE UNIQUE INDEX idx_refresh_token_token ON refresh_tokens(token);
 CREATE INDEX idx_users_username ON users (username);
 
 CREATE INDEX idx_notes_owner_id ON notes (owner_id);
-CREATE INDEX idx_notes_public_slug ON notes (public_slug);
-CREATE INDEX idx_notes_deleted_at ON notes (deleted_at);
+
 
 CREATE INDEX idx_note_shares_shared_with_id ON note_shares (shared_with_id);
 

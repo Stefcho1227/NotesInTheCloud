@@ -56,10 +56,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> handleLogin(@RequestBody LoginRequest loginRequest) {
-        Authentication auth = authManager.authenticate(
+        /*Authentication auth = */
+        authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         User user = userService.findByUsername(loginRequest.getUsername());
-        String access = jwtUtil.generateToken(/*(UserDetails) auth.getPrincipal()*/user);
+        String access = jwtUtil.generateToken(user);
         RefreshToken rt = refService.create(user);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", rt.getToken())
                 .httpOnly(true).secure(true).sameSite("None")
