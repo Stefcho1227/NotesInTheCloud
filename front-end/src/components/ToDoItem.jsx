@@ -33,7 +33,7 @@ const ToDoItem = ({toDo, onToggle, onDelete, onEdit, onReminder}) => {
                         onChange={() => onToggle(toDo.id)}
                         onClick={(e) => e.stopPropagation()}
                     />
-                    <span className='toDoTitle'>{toDo.title || 'Untitled To-do'}</span>
+                    <span className='toDoTitle'>{toDo.text || 'Untitled To-do'}</span>
                 </label>
 
                 <div className='toDoActions'>

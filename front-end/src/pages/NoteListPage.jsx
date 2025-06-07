@@ -31,6 +31,7 @@ export default function NoteListPage() {
 
     const handleNoteSelect = (note) => {
         setActiveNoteId(note.id);
+        navigate(`${note.id}`);
     };
 
     return (
@@ -42,6 +43,7 @@ export default function NoteListPage() {
                 onNoteDelete={handleDeleteNote}
                 onSearch={setSearchTerm}
             />
+            <Outlet/>
         </div>
     );
 }

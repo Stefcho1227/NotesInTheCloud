@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ToDoEditor.css'
 
 const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
-    const [title, setTitle] = useState('');
+    const [text, setText] = useState('');
     const [reminder, setReminder] = useState('');
     const [completed, setCompleted] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -10,7 +10,7 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
 
     useEffect(() => {
         if (toDo) {
-            setTitle(toDo.title || '');
+            setText(toDo.text || '');
             setReminder(toDo.reminder || '');
             setCompleted(toDo.completed || false);
         }
@@ -18,16 +18,16 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
 
     useEffect(() => {
         const changesExist = (
-            title !== (toDo?.title || '') ||
+            text !== (toDo?.text || '') ||
             reminder !== (toDo?.reminder || '') ||
             completed !== (toDo?.completed || false)
         );
         setHasChanges(changesExist);
-    }, [title, reminder, completed, toDo]);
+    }, [text, reminder, completed, toDo]);
 
     const handleSave = async () => {
-        if (!title.trim()) {
-            alert("To-Do title cannot be empty");
+        if (!text.trim()) {
+            alert("To-Do text cannot be empty");
             return;
         }
 
@@ -35,7 +35,7 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
         try {
             await onSave({
                 ...(toDo || {}), // Include existing fields if editing
-                title: title.trim(),
+                text: text.trim(),
                 reminder: reminder || null,
                 completed
             });
@@ -50,12 +50,12 @@ const ToDoEditor = ({ toDo, isNew, onSave, onCancel }) => {
 
             <div className="editorForm">
                 <div className="formGroup">
-                    <label>Title:</label>
+                    <label>text:</label>
                     <input
                         type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Enter to-do title"
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        placeholder="Enter to-do text"
                     />
                 </div>
 

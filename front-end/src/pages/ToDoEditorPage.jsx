@@ -3,18 +3,6 @@ import { useParams, useNavigate, useLoaderData } from "react-router";
 import ToDoEditor from "../components/ToDoEditor.jsx";
 import { fetchToDo, updateToDo } from "../api/toDosApi.js";
 
-export async function loader({ params }) {
-    try {
-        const response = await fetchToDo(params.id);
-        if (response.statusText !== 'OK') {
-            throw new Error("Could not load to-do");
-        }
-        return response.data;
-    } catch (error) {
-        return { error: error.message };
-    }
-}
-
 export default function ToDoEditorPage() {
     const toDo = useLoaderData();
     const navigate = useNavigate();
@@ -44,7 +32,7 @@ export default function ToDoEditorPage() {
 
     return (
         <ToDoEditor
-            toDo={isNew ? { title: '', reminder: null, completed: false } : toDo}
+            toDo={isNew ? { text: '', reminder: null, completed: false } : toDo}
             isNew={isNew}
             onSave={handleSave}
             onCancel={handleCancel}

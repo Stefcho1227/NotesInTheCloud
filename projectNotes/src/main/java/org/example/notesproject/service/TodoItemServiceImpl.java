@@ -60,4 +60,9 @@ public class TodoItemServiceImpl implements TodoItemService {
     public void delete(Integer id) {
         todoItemRepository.deleteById(id);
     }
+
+    @Override
+    public List<TodoItem> findTodosByUserId(Integer userId) {
+        return todoItemRepository.findTodoItemByCreatorId(userId);
+    }
 }

@@ -13,4 +13,5 @@ public interface TodoItemService {
     public TodoItem find(Integer id);
     public TodoItem update(Integer id, TodoItemInDTO todoItemInDTO);
     public void delete(Integer id);
+    List<TodoItem> findTodosByUserId(Integer userId);
 }

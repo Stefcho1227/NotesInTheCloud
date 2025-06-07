@@ -45,21 +45,24 @@ const router = createBrowserRouter([
                                 return [];
                             }
                         },
-                    },
-                    {
-                        path: "notes/:id",
-                        element: <NoteEditorPage />,
-                        loader: async ({ params }) => {
-                            try {
-                                const response = await fetchNote(params.id);
-                                if (response.statusText !== 'OK') {
-                                    throw new Error("Could not load note");
-                                }
-                                return response.data;
-                            } catch (error) {
-                                return { error: error.message };
+                        children:[
+                            {
+                                path: ":id",
+                                element: <NoteEditorPage />,
+                                loader: async ({ params }) => {
+                                    try {
+                                        console.log('note id in loader: ', params.id)
+                                        const response = await fetchNote(params.id);
+                                        if (response.status >= 400) {
+                                            throw new Error("Could not load note");
+                                        }
+                                        return response.data;
+                                    } catch (error) {
+                                        return { error: error.message };
+                                    }
+                                },
                             }
-                        },
+                        ]
                     },
                     {
                         path: "notes/new",
@@ -71,8 +74,8 @@ const router = createBrowserRouter([
                         element: <ToDoListPage />,
                         loader: async () => {
                             try {
-                                const response = await fetchToDos();
-                                if (response.statusText !== 'OK' || !Array.isArray(response.data)) {
+                                const response = await fetchToDos(getUID());
+                                if (response.status >= 400) {
                                     throw new Error("Could not load to-dos");
                                 }
                                 return response.data;
@@ -81,21 +84,23 @@ const router = createBrowserRouter([
                                 return [];
                             }
                         },
-                    },
-                    {
-                        path: "todos/:id",
-                        element: <ToDoEditorPage />,
-                        loader: async ({ params }) => {
-                            try {
-                                const response = await fetchToDo(params.id);
-                                if (response.statusText !== 'OK') {
-                                    throw new Error("Could not load to-do");
-                                }
-                                return response.data;
-                            } catch (error) {
-                                return { error: error.message };
-                            }
-                        },
+                        children:[
+                            {
+                                path: ":id",
+                                element: <ToDoEditorPage />,
+                                loader: async ({ params }) => {
+                                    try {
+                                        const response = await fetchToDo(params.id);
+                                        if (response.status >= 400) {
+                                            throw new Error("Could not load to-do");
+                                        }
+                                        return response.data;
+                                    } catch (error) {
+                                        return { error: error.message };
+                                    }
+                                },
+                            },
+                        ]
                     },
                     {
                         path: "todos/new",
