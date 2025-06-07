@@ -1,0 +1,29 @@
+/* NoteList.css */
+.noteList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    outline: none;
+}
+
+.searchInput:focus {
+    border-bottom-color: #4CAF50;
+}
+
+.notes-container {
+    display: flex;
+    gap: 20px;
+}

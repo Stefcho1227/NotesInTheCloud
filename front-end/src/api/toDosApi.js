@@ -1,9 +1,7 @@
-import axios from 'axios';
+import api from './axiosConfig';
 
-const API_ROOT = 'http://localhost:8080/api'
-
-export const fetchToDos = () => axios.get(`${API_ROOT}/toDos`);
-export const fetchToDo = (id) => axios.get(`${API_ROOT}/toDos/${id}`);
-export const createToDo = (toDo) => axios.post(`${API_ROOT}/toDos`, toDo);
-export const updateToDo = (id, toDo) => axios.put(`${API_ROOT}/toDos/${id}`, toDo);
-export const deleteToDo = (id) => axios.delete(`${API_ROOT}/toDos/${id}`);
+export const fetchToDos = () => api.get('/toDos');
+export const fetchToDo = (id) => api.get(`/toDos/${id}`);
+export const createToDo = (toDo) => api.post('/toDos', toDo);
+export const updateToDo = (id, toDo) => api.put(`/toDos/${id}`, toDo);
+export const deleteToDo = (id) => api.delete(`/toDos/${id}`);

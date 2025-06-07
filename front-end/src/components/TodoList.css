@@ -1,0 +1,76 @@
+/* ToDoList.css */
+.toDoList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.toDoItem {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.toDoItem:hover {
+    background-color: #f9f9f9;
+}
+
+.toDoItem.completed {
+    background-color: #f5f5f5;
+    text-decoration: line-through;
+    color: #999;
+}
+
+.toDoItemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toDoItemHeader label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.toDoTitle {
+    margin: 0;
+}
+
+.toDoActions {
+    display: flex;
+    gap: 10px;
+}
+
+.toDoActions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.reminderBtn {
+    color: #2196F3;
+}
+
+.deleteBtn {
+    color: #f44336;
+}
+
+.noteDate {
+    margin: 5px 0 0 0;
+    font-size: 12px;
+    color: #999;
+}
+
+.todos-container {
+    display: flex;
+    gap: 20px;
+}

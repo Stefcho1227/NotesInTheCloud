@@ -18,14 +18,19 @@ export async function loader({ params }) {
 export default function ToDoEditorPage() {
     const toDo = useLoaderData();
     const navigate = useNavigate();
+    const isNew = !toDo; // Determine if this is a new todo
 
-    const handleUpdateToDo = async (updatedToDo) => {
+    const handleSave = async (toDoData) => {
         try {
-            await updateToDo(updatedToDo.id, updatedToDo);
+            if (isNew) {
+                await createToDo(toDoData);
+            } else {
+                await updateToDo(toDoData.id, toDoData);
+            }
             navigate('/app/todos');
         } catch (err) {
-            console.error("Could not update to-do", err);
-            alert("Failed to update to-do");
+            console.error("Could not save to-do", err);
+            alert(`Failed to ${isNew ? 'create' : 'update'} to-do`);
         }
     };
 
@@ -33,14 +38,15 @@ export default function ToDoEditorPage() {
         navigate('/app/todos');
     };
 
-    if (toDo.error) {
+    if (toDo?.error) {
         return <section>{toDo.error}</section>;
     }
 
     return (
         <ToDoEditor
-            toDo={toDo}
-            onSave={handleUpdateToDo}
+            toDo={isNew ? { title: '', reminder: null, completed: false } : toDo}
+            isNew={isNew}
+            onSave={handleSave}
             onCancel={handleCancel}
         />
     );

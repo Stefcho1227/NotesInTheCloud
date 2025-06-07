@@ -2,20 +2,25 @@
 import React from "react";
 import { useParams, useNavigate, useLoaderData } from "react-router";
 import NoteEditor from "../components/NoteEditor.jsx";
-import {  updateNote } from "../api/notesApi.js";
-
+import {createNote, updateNote} from "../api/notesApi.js";
+import {getUID, getAccessToken, getCurrentUser} from "../api/authApi.js";
 
 export default function NoteEditorPage() {
     const note = useLoaderData();
     const navigate = useNavigate();
+    const isNew = !note; // Determine if this is a new note
 
-    const handleUpdateNote = async (updatedNote) => {
+    const handleSave = async (noteData) => {
         try {
-            await updateNote(updatedNote.id, updatedNote);
+            if (isNew) {
+                await createNote({...noteData, ownerId: getUID()});
+            } else {
+                await updateNote(noteData.id, {...noteData, ownerId: getUID()});
+            }
             navigate('/app/notes');
         } catch (err) {
-            console.error("Could not update note", err);
-            alert("Failed to update note");
+            console.error("Could not save note", err);
+            alert(`Failed to ${isNew ? 'create' : 'update'} note`);
         }
     };
 
@@ -23,14 +28,15 @@ export default function NoteEditorPage() {
         navigate('/app/notes');
     };
 
-    if (note.error) {
+    if (note?.error) {
         return <section>{note.error}</section>;
     }
 
     return (
         <NoteEditor
-            note={note}
-            onUpdateNote={handleUpdateNote}
+            note={isNew ? { title: '', content: '', isPublic: false } : note}
+            isNew={isNew}
+            onUpdateNote={handleSave}
             onCancel={handleCancel}
         />
     );

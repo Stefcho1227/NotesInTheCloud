@@ -13,4 +13,5 @@ public interface NoteService {
     public Note find(Integer id);
     public Note update(Integer id, NoteInDTO userInDTO);
     public void delete(Integer id);
+    List<Note> findNoteByUserId(Integer userId);
 }

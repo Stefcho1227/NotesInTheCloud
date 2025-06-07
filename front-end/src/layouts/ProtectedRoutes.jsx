@@ -1,17 +1,20 @@
-// ProtectedRoute.jsx
-import { useNavigate, Outlet } from 'react-router';
+import { Outlet, Navigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import api from '../api/axiosConfig';
+import { getAccessToken } from '../api/authApi';
 
 const ProtectedRoute = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const verifyAuth = async () => {
             try {
-                await api.get('/auth/verify');
-                setIsAuthenticated(true);
+                // Simple check - if we have an access token, consider authenticated
+                if (getAccessToken()) {
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
             } catch (err) {
                 setIsAuthenticated(false);
             }
@@ -23,9 +26,7 @@ const ProtectedRoute = () => {
         return <div>Loading...</div>;
     }
 
-    if(!isAuthenticated) navigate('/');
-
-    return <Outlet />;
+    return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
 };
 
 export default ProtectedRoute;

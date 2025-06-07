@@ -1,9 +1,11 @@
 import React from "react";
-import NoteItem  from "./NoteItem";
-import {useState} from 'react';
+import NoteItem from "./NoteItem";
+import { useState } from 'react';
+import "./NoteList.css"
 
-const NoteList = ({ notes, activeNote, onNoteSelect, onNoteDelete, onSearch}) => {
+const NoteList = ({ notes, activeNote, onNoteSelect, onNoteDelete, onSearch }) => {
     const [searchInput, setSearchInput] = useState('');
+
     const handleSearch = (e) => {
         setSearchInput(e.target.value);
         onSearch(e.target.value);
@@ -16,20 +18,22 @@ const NoteList = ({ notes, activeNote, onNoteSelect, onNoteDelete, onSearch}) =>
                 placeholder='Search notes...'
                 value={searchInput}
                 onChange={handleSearch}
-                className='searchInput'/>
+                className='searchInput'
+            />
 
-            {notes.length === 0 ?
-            (<div className="emptyState">
-                No notes found
-            </div>) : (
-
+            {notes.length === 0 ? (
+                <div className="emptyState">
+                    No notes found
+                </div>
+            ) : (
                 notes.map(note => (
                     <NoteItem
-                    key={note.id}
-                    note={note}
-                    isActive={activeNote && activeNote.id === note.id}
-                    onSelect={onNoteSelect}
-                    onDelete={onNoteDelete}/>
+                        key={note.id}
+                        note={note}
+                        isActive={activeNote && activeNote.id === note.id}
+                        onSelect={onNoteSelect}
+                        onDelete={onNoteDelete}
+                    />
                 ))
             )}
         </ul>

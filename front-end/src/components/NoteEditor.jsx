@@ -1,105 +1,98 @@
+import React, { useState, useEffect } from 'react';
+import './NoteEditor.css'
 
-import React from "react";
-import {useState, useEffect} from 'react';
-
-const NoteEditor = ({note, onUpdateNote, onCancel}) => {
+const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isPublic, setIsPublic] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
+
     useEffect(() => {
         if (note) {
-            setTitle(note.title);
-            setContent(note.content);
-            setIsPublic(note.isPublic || false);
-        }
-        else {
-            setTitle('');
-            setContent('');
-            setIsPublic(false);
+            setTitle(note.title || '');
+            setContent(note.content || '');
         }
     }, [note]);
 
     useEffect(() => {
-        const trimmedTitle = title.trim();
-        const originalTitle = note.title.trim();
-
         const changesExist = (
-          trimmedTitle !== originalTitle ||
-          content !== note.content ||
-          isPublic !== (note.isPublic || false)
+            title !== (note?.title || '') ||
+            content !== (note?.content || '') ||
+            isPublic !== (note?.isPublic || false)
         );
-
         setHasChanges(changesExist);
     }, [title, content, isPublic, note]);
-    const handleSave = async () => {
-        if (!title || !title.trim()) {
-        alert("Note title cannot be empty");
-        return;
-        }
 
-        if (!note) {
-            alert("No note selected to save");
+    const handleSave = async () => {
+        if (!title.trim()) {
+            alert("Note title cannot be empty");
             return;
         }
 
         setIsSaving(true);
-
         try {
-            onUpdateNote({...note, title, content, isPublic});
-        } catch (err) {
-            console.error("Failed to save note: ", err);
-            alert("Failed to save note. Please try again.");
+            await onUpdateNote({
+                ...(note || {}), // Include existing fields if editing
+                title: title.trim(),
+                content,
+                isPublic
+            });
         } finally {
             setIsSaving(false);
         }
     };
 
-    if(!note) {
-            return (
-                <div className='noteEditor empty'>
-                    <div className='emptyState'>
-                        Select a note to edit or create a new one
-                    </div>
+    return (
+        <div className="noteEditor">
+            <h2>{isNew ? 'Create New' : 'Edit'} Note</h2>
+
+            <div className="editorForm">
+                <div className="formGroup">
+                    <label>Title:</label>
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Note title"
+                    />
                 </div>
-            );
-        }
 
-        return (
-            <div className='noteEditor'>
-                <input
-                type='text'
-                className='noteTitle'
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder='Note title'/>
+                <div className="formGroup">
+                    <label>Content:</label>
+                    <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Write your note here..."
+                        rows={10}
+                    />
+                </div>
 
-                <textarea
-                className='noteContent'
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder='Write your note here...'
-                />
-
-                <div className={'publicToggle'}>
+                <div className="formGroup">
                     <label>
                         <input
-                        type='checkbox'
-                        checked={isPublic}
-                        onChange={(e) => setIsPublic(e.target.checked)}/>
-                    Make note public
+                            type="checkbox"
+                            checked={isPublic}
+                            onChange={(e) => setIsPublic(e.target.checked)}
+                        />
+                        Make note public
                     </label>
                 </div>
 
-                <div className='editorActions'>
-                    <button onClick={handleSave} className='saveBtn' disabled={isSaving || !hasChanges}>{isSaving ? "Saving..." : "Save" }</button>
-
-                    <button onClick={onCancel} className='cancelBtn' disabled={isSaving}>Cancel</button>
-
+                <div className="editorActions">
+                    <button
+                        onClick={handleSave}
+                        disabled={isSaving || (!isNew && !hasChanges)}
+                    >
+                        {isSaving ? "Saving..." : "Save"}
+                    </button>
+                    <button onClick={onCancel} disabled={isSaving}>
+                        Cancel
+                    </button>
                 </div>
             </div>
-        );
+        </div>
+    );
 };
 
 export default NoteEditor;

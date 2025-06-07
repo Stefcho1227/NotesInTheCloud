@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ToDoItem from "./ToDoItem"
+import './TodoList.css'
 
 const ToDoList = ({toDos, onToggle, onDelete, onEdit, onReminder}) => {
     return (

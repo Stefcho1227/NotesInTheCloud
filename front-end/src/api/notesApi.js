@@ -1,9 +1,7 @@
-import axios from 'axios';
+import api from './axiosConfig';
 
-const API_ROOT = 'http://localhost:8080/api'
-
-export const fetchNotes = () => axios.get(`${API_ROOT}/notes`);
-export const fetchNote = (id) => axios.get(`${API_ROOT}/notes/${id}`);
-export const createNote = (note) => axios.post(`${API_ROOT}/notes`, note);
-export const updateNote = (id, note) => axios.put(`${API_ROOT}/notes/${id}`, note);
-export const deleteNote = (id) => axios.delete(`${API_ROOT}/notes/${id}`);
+export const fetchNotes = (userId) => api.get(`/users/${userId}/notes`);
+export const fetchNote = (id) => api.get(`/notes/${id}`);
+export const createNote = (note) => api.post('/notes', note);
+export const updateNote = (id, note) => api.put(`/notes/${id}`, note);
+export const deleteNote = (id) => api.delete(`/notes/${id}`);

@@ -40,11 +40,6 @@ public class NoteServiceImpl implements NoteService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         createdNote.setOwner(owner);
         Note savedNote = noteRepository.save(createdNote);
-//        if(savedNote.getIsPublic()){
-//            String secureSlug = generateSecureSlug(savedNote.getId());
-//            savedNote.setPublicSlug(BASE_URL + "{"+secureSlug+"}");
-//            return noteRepository.save(savedNote);
-//        }
         return savedNote;
     }
 
@@ -76,6 +71,12 @@ public class NoteServiceImpl implements NoteService {
     public void delete(Integer id) {
         noteRepository.deleteById(id);
     }
+
+    @Override
+    public List<Note> findNoteByUserId(Integer userId) {
+        return noteRepository.findByOwner_Id(userId);
+    }
+
     private String generateSecureSlug(Integer noteId) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

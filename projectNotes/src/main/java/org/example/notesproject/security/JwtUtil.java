@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import org.example.notesproject.models.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -26,10 +27,11 @@ public class JwtUtil {
         byte[] bytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(bytes);
     }
-    public String generateToken(UserDetails user) {
+    public String generateToken(/*UserDetails user*/ User user) {
         Date now = new Date();
         return Jwts.builder()
                 .subject(user.getUsername())
+                .claim("userId", user.getId())
                 //.claim("roles", user.getAuthorities())
                 .issuedAt(now)
                 .expiration(Date.from(now.toInstant().plusMillis(jwtExpirationMs)))

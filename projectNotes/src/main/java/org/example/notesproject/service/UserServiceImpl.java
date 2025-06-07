@@ -4,7 +4,9 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.example.notesproject.dtos.in.UserInDTO;
 import org.example.notesproject.mappers.UserMapper;
+import org.example.notesproject.models.Note;
 import org.example.notesproject.models.User;
+import org.example.notesproject.repository.NoteRepository;
 import org.example.notesproject.repository.UserRepository;
 import org.example.notesproject.service.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +17,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final NoteRepository noteRepository;
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper){
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, NoteRepository noteRepository){
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.noteRepository = noteRepository;
     }
     @Override
     public User create(UserInDTO userInDTO) {
@@ -28,7 +32,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userRepository.findByEmail(userInDTO.getEmail()).isPresent()) {
-            throw new EntityExistsException("Username already exists");
+            throw new EntityExistsException("Email already exists");
         }
 
         User createdUser = userMapper.fromDto(userInDTO);
@@ -66,4 +70,9 @@ public class UserServiceImpl implements UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("User"));
     }
+
+    /*@Override
+    public List<Note> findNoteByUserId(Integer userId) {
+        return noteRepository.findByUserId(userId);
+    }*/
 }

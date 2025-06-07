@@ -59,7 +59,7 @@ public class AuthController {
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         User user = userService.findByUsername(loginRequest.getUsername());
-        String access = jwtUtil.generateToken((UserDetails) auth.getPrincipal());
+        String access = jwtUtil.generateToken(/*(UserDetails) auth.getPrincipal()*/user);
         RefreshToken rt = refService.create(user);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", rt.getToken())
                 .httpOnly(true).secure(true).sameSite("None")
@@ -74,12 +74,7 @@ public class AuthController {
         User user = refService.verify(token);
         refService.delete(token);
         RefreshToken newRt = refService.create(user);
-        String access = jwtUtil.generateToken(
-                org.springframework.security.core.userdetails.User
-                        .withUsername(user.getUsername())
-                        .password(user.getPasswordHash())
-                        .authorities(List.of())
-                        .build());
+        String access = jwtUtil.generateToken(user);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", newRt.getToken())
                 .httpOnly(true).secure(true).sameSite("None")
                 .path("/api/auth")

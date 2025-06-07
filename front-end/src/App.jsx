@@ -12,6 +12,7 @@ import ToDoListPage from "./pages/ToDoListPage";
 import NoteEditorPage from "./pages/NoteEditorPage";
 import ToDoEditorPage from "./pages/ToDoEditorPage";
 import axios from "axios";
+import {getUID} from "./api/authApi.js";
 
 // Configure axios defaults
 axios.defaults.withCredentials = true;
@@ -37,23 +38,11 @@ const router = createBrowserRouter([
                         element: <NoteListPage />,
                         loader: async () => {
                             try {
-                                const response = await fetchNotes();
-                                console.log(response);
-
-                                // Ensure the response data is an array
-                                if (!Array.isArray(response.data)) {
-                                    throw new Error("Invalid data format - expected array");
-                                }
-
-                                if (response.statusText !== 'OK') {
-                                    throw new Error("Could not load notes");
-                                }
-
-                                console.log(response.data);
+                                const response = await fetchNotes(getUID());
                                 return response.data;
                             } catch (error) {
                                 console.log(error.message);
-                                return []; // Return empty array on error
+                                return [];
                             }
                         },
                     },
@@ -75,6 +64,7 @@ const router = createBrowserRouter([
                     {
                         path: "notes/new",
                         element: <NoteEditorPage />,
+                        loader: async () => null
                     },
                     {
                         path: "todos",
@@ -110,6 +100,7 @@ const router = createBrowserRouter([
                     {
                         path: "todos/new",
                         element: <ToDoEditorPage />,
+                        loader: async () => null
                     },
                 ],
             },

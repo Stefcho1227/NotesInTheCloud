@@ -1,0 +1,54 @@
+/* NoteItem.css */
+.noteItem {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.noteItem:hover {
+    background-color: #f9f9f9;
+}
+
+.noteItem.active {
+    background-color: #e8f5e9;
+}
+
+.noteItemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.noteItemHeader h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.deleteBtn {
+    background: none;
+    border: none;
+    color: #f44336;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.deleteBtn:hover {
+    color: #d32f2f;
+}
+
+.notePreview {
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+.noteDate {
+    margin: 0;
+    font-size: 12px;
+    color: #999;
+}

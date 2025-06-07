@@ -16,11 +16,6 @@ public class NoteMapper {
         } else{
             note.setContent(dto.getContent());
         }
-//        if(dto.getIsPublic() == null){
-//            note.setIsPublic(false);
-//        } else{
-//            note.setIsPublic(dto.getIsPublic());
-//        }
         return note;
     }
     public void updateDto(Note note, NoteInDTO dto){

@@ -1,375 +1,47 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
+/* App.css */
 body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f5f5;
-}
-
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
 }
 
 .app {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
 }
 
-.appHeader {
+.mainContent {
     display: flex;
-    flex-direction: column;
-    padding-bottom: 0;
-}
-
-.tabs {
-    display: flex;
-    margin-top: 10px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.tabs button {
     flex: 1;
-    padding: 12px 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.tabs button.active {
-    border-bottom: 2px solid #4285f4;
+    padding: 20px;
+    gap: 20px;
 }
 
 .fab {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    height: 56px;
-    width: 56px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background-color: #4285f4;
+    background-color: #4CAF50;
     color: white;
     border: none;
     font-size: 24px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s;
 }
 
 .fab:hover {
-    background-color: #3367d6;
+    background-color: #45a049;
     transform: scale(1.1);
-    transition: transform 0.2s;
-}
-
-.headerActions {
-    display: flex;
-    gap: 1rem;
-}
-
-.searchInput {
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: 1px solid #e0e0e0;
-    width: 100%;
-    max-width: 500px;
-}
-
-.addNoteBtn {
-    background-color: white;
-    color: #4285f4;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.addNoteBtn:hover {
-    background-color: #f1f1f1;
-}
-
-.mainContent {
-    display: flex;
-    flex:1;
-    overflow: hidden;
-}
-
-.noteList {
-    width: 300px;
-    background-color: white;
-    border-right: 1px solid #e0e0e0;
-    overflow-y: auto;
-}
-
-.noteItem {
-    padding: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-    cursor: pointer;
-}
-
-.noteItem:hover {
-    background-color: #f9f9f9;
-}
-
-.noteItem.active {
-    background-color: #e0e0e0;
-    font-weight: bold;
-    border-color: #aaa;
-}
-
-.noteItemHeader {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-}
-
-.noteItemHeader h3 {
-    font-size: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.deleteBtn {
-    background: none;
-    border: none;
-    color: #757575;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0 0.5rem;
-}
-
-.deleteBtn:hover {
-    color: #f44336;
-}
-
-.notePreview {
-    color:#757575;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.noteDate {
-    color: #9e9e9e;
-    font-size: 0.8rem;
 }
 
 .emptyState {
-    padding: 2rem;
     text-align: center;
-    color: #757575;
-}
-
-.publicToggle {
-    margin: 1rem 0;
-    padding: 0.5rem;
-    background: #f5f5f5;
-    border-radius: 4px;
-}
-
-.publicToggle label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-}
-
-.noteEditor {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;;
-}
-
-.noteEditor .empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.noteTitle {
-    font-size: 1.5rem;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-}
-
-.noteContent {
-    flex: 1;
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    resize: none;
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-}
-
-.toDoList {
-    flex: 1;
-    background-color: white;
-    overflow-y: auto;
-    border-left: 1px solid #e0e0e0;
-    padding: 0;
-}
-
-.toDoItem {
-    padding: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-    cursor: pointer;
-}
-
-.toDoItem:hover {
-    background-color: #f9f9f9;
-}
-
-.toDoItem.completed .toDoTitle {
-    text-decoration: line-through;
-    color: #9e9e9e;
-}
-
-.toDoItem.active {
-    background-color: #e0e0e0;
-    font-weight: bold;
-    border-color: #aaa;
-}
-
-.toDoItem .noteItemHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.toDoTitle {
-    font-size: 1rem;
-    margin-left: 0.5rem;
-}
-
-.toDoActions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.reminderBtn {
-    background: none;
-    border: 1px solid #4285f4;
-    color: #4285f4;
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-.reminderBtn:hover {
-    background-color: #e3f2fd;
-}
-
-.editorActions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.saveBtn {
-    align-self: flex-end;
-    background-color: #4285f4;
-    color: white;
-    border: none;
-    padding:  0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.saveBtn:hover {
-    background-color: #3367d6;
-}
-
-.cancelBtn {
-    background-color: #f5f5f5;
-    color: #333;
-    border: 1px solid #e0e0e0;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.cancelBtn:hover {
-    background-color: #e0e0e0;
-}
-
-
-.dialogOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.dialogContent {
-    background: white;
     padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    animation: fadeIn 0.3s ease-out;
-}
-
-.dialogButtons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.dialogButtons button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.confirmBtn {
-    background-color: #f44336;
-    color: white;
-}
-
-.confirmBtn:hover {
-    background-color: #d32f2f;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    color: #666;
+    font-style: italic;
 }
