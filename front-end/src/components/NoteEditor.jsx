@@ -87,7 +87,7 @@ const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
                    if (!note?.id) return;        // safety guard
                    setShareBusy(true);
                    try {
-                     await createShare(note.id, user.id, "read");
+                     await createShare(note.id, user.id, "READ");
                      alert(`Shared with ${user.username}`);
                    } catch (e) {
                      alert("Failed to share");
