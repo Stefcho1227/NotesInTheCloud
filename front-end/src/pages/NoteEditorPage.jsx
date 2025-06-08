@@ -1,21 +1,33 @@
-// NoteEditorPage.jsx
 import React from "react";
 import { useParams, useNavigate, useLoaderData } from "react-router";
 import NoteEditor from "../components/NoteEditor.jsx";
-import {createNote, updateNote} from "../api/notesApi.js";
-import {getUID, getAccessToken, getCurrentUser} from "../api/authApi.js";
+import { createNote, updateNote } from "../api/notesApi.js";
+import { getUID } from "../api/authApi.js";
 
 export default function NoteEditorPage() {
     const note = useLoaderData();
     const navigate = useNavigate();
-    const isNew = !note; // Determine if this is a new note
+    const isNew = !note?.id; // Determine if this is a new note
 
     const handleSave = async (noteData) => {
         try {
             if (isNew) {
-                await createNote({...noteData, ownerId: getUID()});
+                // For new notes, include ownerId and other required fields
+                await createNote({
+                    ...noteData,
+                    ownerId: getUID(),
+                    isPublic: false // Default value for new notes
+                });
             } else {
-                await updateNote(noteData.id, {...noteData, ownerId: getUID()});
+                // For shared notes, only allow update if user has EDIT permission
+                if (note.sharedPermission && note.sharedPermission !== 'EDIT') {
+                    alert("You don't have permission to edit this note");
+                    return;
+                }
+                await updateNote(noteData.id, {
+                    ...noteData,
+                    ownerId: getUID()
+                });
             }
             navigate('/app/notes');
         } catch (err) {
@@ -34,10 +46,11 @@ export default function NoteEditorPage() {
 
     return (
         <NoteEditor
-            note={isNew ? { title: '', content: '', isPublic: false } : note}
+            note={isNew ? { title: '', content: '' } : note}
             isNew={isNew}
             onUpdateNote={handleSave}
             onCancel={handleCancel}
+            isReadOnly={!isNew && note?.sharedPermission === 'READ'}
         />
     );
 }

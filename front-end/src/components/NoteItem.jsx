@@ -1,7 +1,7 @@
 import React from "react";
-import "./NoteItem.css"
+import "./NoteItem.css";
 
-const NoteItem = ({ note, isActive, onSelect, onDelete }) => {
+const NoteItem = ({ note, isActive, onSelect, onDelete, isOwn, sharedPermission }) => {
     const formattedDate = note.updatedAt ? new Date(note.updatedAt).toLocaleString() : new Date(note.createdAt).toLocaleString();
 
     const handleDelete = (e) => {
@@ -15,13 +15,19 @@ const NoteItem = ({ note, isActive, onSelect, onDelete }) => {
         <div className={`noteItem ${isActive ? 'active' : ''}`}
              onClick={() => onSelect(note)}>
             <div className="noteItemHeader">
-                <h3>{note.title}
-                    {note.shared && <span className="sharedBadge">• shared</span>}
+                <h3>
+                    {note.title}
+                    {!isOwn && (
+                        <span className="sharedBadge">
+                            • shared ({sharedPermission.toLowerCase()})
+                        </span>
+                    )}
                 </h3>
-
-                <button className="deleteBtn" onClick={handleDelete}>
-                    X
-                </button>
+                {onDelete && (
+                    <button className="deleteBtn" onClick={handleDelete}>
+                        X
+                    </button>
+                )}
             </div>
 
             <p className="notePreview">

@@ -3,13 +3,13 @@ import { createShare } from "../api/shareApi";
 import './NoteEditor.css'
 import UserPickerDialog from "./UserPickerDialog";
 
-const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
+const NoteEditor = ({ note, isNew, onUpdateNote, onCancel, isReadOnly }) => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
     const [showPicker, setShowPicker] = useState(false);
-    const [shareBusy,  setShareBusy]  = useState(false);
+    const [shareBusy, setShareBusy] = useState(false);
 
     useEffect(() => {
         if (note) {
@@ -36,6 +36,7 @@ const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
         try {
             await onUpdateNote({
                 ...(note || {}), // Include existing fields if editing
+                id: note?.id,    // Include id if it exists
                 title: title.trim(),
                 content
             });
@@ -56,6 +57,7 @@ const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Note title"
+                        readOnly={isReadOnly}
                     />
                 </div>
 
@@ -66,25 +68,28 @@ const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Write your note here..."
                         rows={10}
+                        readOnly={isReadOnly}
                     />
                 </div>
 
-                <div className="formGroup">
-                       <button
-                         type="button"
-                         className="shareBtn"
-                         disabled={isSaving || isNew || shareBusy}
-                         onClick={() => setShowPicker(true)}
-                       >
-                         Share
-                       </button>
-                 </div>
+                {!isNew && !isReadOnly && (
+                    <div className="formGroup">
+                        <button
+                            type="button"
+                            className="shareBtn"
+                            disabled={isSaving || shareBusy}
+                            onClick={() => setShowPicker(true)}
+                        >
+                            Share
+                        </button>
+                    </div>
+                )}
 
                 {showPicker && (
                     <UserPickerDialog
                         onClose={() => setShowPicker(false)}
                         onSelect={async (user, permission) => {
-                            if (!note?.id) return; // safety guard
+                            if (!note?.id) return;
                             setShareBusy(true);
                             try {
                                 await createShare(note.id, user.id, permission);

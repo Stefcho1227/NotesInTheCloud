@@ -32,7 +32,9 @@ const NoteList = ({ notes, activeNote, onNoteSelect, onNoteDelete, onSearch }) =
                         note={note}
                         isActive={activeNote && activeNote.id === note.id}
                         onSelect={onNoteSelect}
-                        onDelete={onNoteDelete}
+                        onDelete={note.canDelete ? onNoteDelete : null}
+                        isOwn={note.isOwn}
+                        sharedPermission={note.sharedPermission}
                     />
                 ))
             )}

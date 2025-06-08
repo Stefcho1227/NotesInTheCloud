@@ -3,43 +3,57 @@ import { useLoaderData, useNavigate, Outlet } from "react-router";
 import NoteList from "../components/NoteList.jsx";
 import { deleteNote } from "../api/notesApi.js";
 import { fetchSharedNotes } from "../api/shareApi";
-import { getUID } from "../api/authApi";
-
+import { getUID } from "../api/authApi.js";
 
 export default function NoteListPage() {
     const loaderData = useLoaderData();
     const [searchTerm, setSearchTerm] = useState('');
-    
-    const [shared,    setShared]    = useState([]);
+    const [sharedNotes, setSharedNotes] = useState([]);
+    const [activeNoteId, setActiveNoteId] = useState(null);
+    const navigate = useNavigate();
     const uid = getUID();
 
     useEffect(() => {
-          fetchSharedNotes(uid)
-            .then(r => setShared(r.data))
-            .catch(() => setShared([]));
-        }, [uid]);
+        const loadSharedNotes = async () => {
+            try {
+                const response = await fetchSharedNotes(uid);
+                setSharedNotes(response.data || []);
+            } catch (error) {
+                console.error("Failed to fetch shared notes:", error);
+                setSharedNotes([]);
+            }
+        };
+        loadSharedNotes();
+    }, [uid]);
 
-    const ownNotes     = loaderData.map(n => ({ ...n, shared: false }));
-    const sharedNotes  = shared.map(s => ({
-            ...s.note,      // the note entity lives inside NoteShare
-            shared: true,
-            perm : s.perm
-    }));
-    const merged = [...ownNotes, ...sharedNotes];
-    const filteredNotes = merged.filter(note => {
-            const term = searchTerm.toLowerCase();
-            return (
-                  note.title?.toLowerCase().includes(term) ||
-                  note.content.toLowerCase().includes(term)
-                );
-        });
-    const [activeNoteId, setActiveNoteId] = useState(null);
-    const navigate = useNavigate();
+    // Merge own notes and shared notes, marking ownership
+    const mergedNotes = [
+        ...(loaderData || []).map(note => ({
+            ...note,
+            isOwn: true,
+            canDelete: true
+        })),
+        ...sharedNotes.map(share => ({
+            ...share.note,
+            isOwn: false,
+            canDelete: false,
+            sharedPermission: share.perm
+        }))
+    ];
+
+    // Filter notes based on search term
+    const filteredNotes = mergedNotes.filter(note => {
+        if (!note) return false;
+        const term = searchTerm.toLowerCase();
+        return (
+            note.title?.toLowerCase().includes(term) ||
+            note.content?.toLowerCase().includes(term)
+        );
+    });
 
     const handleDeleteNote = async (noteId) => {
         try {
             await deleteNote(noteId);
-            // Refresh the page after deletion
             navigate('.', { replace: true });
         } catch (error) {
             console.error("Failed to delete note:", error);
@@ -47,19 +61,14 @@ export default function NoteListPage() {
         }
     };
 
-    if (loaderData.error) {
-        return <section>{loaderData.error}</section>;
-    }
-
-/*    const filteredNotes = loaderData.filter(note => note &&
-        (note.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            note.content.toLowerCase().includes(searchTerm.toLowerCase())
-        ));*/
-
     const handleNoteSelect = (note) => {
         setActiveNoteId(note.id);
         navigate(`${note.id}`);
     };
+
+    if (loaderData.error) {
+        return <section>{loaderData.error}</section>;
+    }
 
     return (
         <div className="notes-container">
