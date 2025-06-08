@@ -80,24 +80,24 @@ const NoteEditor = ({ note, isNew, onUpdateNote, onCancel }) => {
                        </button>
                  </div>
 
-             {showPicker && (
-               <UserPickerDialog
-                 onClose={() => setShowPicker(false)}
-                 onSelect={async (user) => {
-                   if (!note?.id) return;        // safety guard
-                   setShareBusy(true);
-                   try {
-                     await createShare(note.id, user.id, "READ");
-                     alert(`Shared with ${user.username}`);
-                   } catch (e) {
-                     alert("Failed to share");
-                   } finally {
-                     setShareBusy(false);
-                     setShowPicker(false);
-                   }
-                 }}
-               />
-             )}
+                {showPicker && (
+                    <UserPickerDialog
+                        onClose={() => setShowPicker(false)}
+                        onSelect={async (user, permission) => {
+                            if (!note?.id) return; // safety guard
+                            setShareBusy(true);
+                            try {
+                                await createShare(note.id, user.id, permission);
+                                alert(`Shared with ${user.username} (${permission} permission)`);
+                            } catch (e) {
+                                alert("Failed to share");
+                            } finally {
+                                setShareBusy(false);
+                                setShowPicker(false);
+                            }
+                        }}
+                    />
+                )}
 
                 <div className="editorActions">
                     <button

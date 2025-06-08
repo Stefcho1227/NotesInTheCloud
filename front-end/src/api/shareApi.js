@@ -1,5 +1,3 @@
-// api/shareApi.js  (new file, or add to notesApi.js)
-
 import api from "./axiosConfig";
 
 export const createShare = (noteId, targetUserId, perm = "READ") =>
