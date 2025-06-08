@@ -27,12 +27,11 @@ public class JwtUtil {
         byte[] bytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(bytes);
     }
-    public String generateToken(/*UserDetails user*/ User user) {
+    public String generateToken(User user) {
         Date now = new Date();
         return Jwts.builder()
                 .subject(user.getUsername())
                 .claim("userId", user.getId())
-                //.claim("roles", user.getAuthorities())
                 .issuedAt(now)
                 .expiration(Date.from(now.toInstant().plusMillis(jwtExpirationMs)))
                 .signWith(key)

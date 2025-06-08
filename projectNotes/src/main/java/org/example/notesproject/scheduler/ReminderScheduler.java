@@ -43,7 +43,6 @@ public class ReminderScheduler {
         Notification n = new Notification();
         n.setUser(r.getCreator());
         n.setReminder(r);
-//        n.setChannel(Channel.EMAIL);
         n.setSentAt(LocalDateTime.now());
         notificationRepository.save(n);
         r.setSent(true);

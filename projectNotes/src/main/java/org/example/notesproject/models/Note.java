@@ -24,20 +24,12 @@ public class Note {
     private String title;
     @Column(name = "content")
     private String content;
-//    @Column(name = "is_public")
-//    private boolean isPublic;
-//
-//    @Column(name = "public_slug", unique = true)
-//    private String publicSlug;
-
     @CreationTimestamp
     @Column(name="created_at")
     private LocalDateTime createdAt;
     @UpdateTimestamp
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
-//    @Column(name="deleted_at")
-//    private LocalDateTime deletedAt;
     public Note() {
     }
 
@@ -73,22 +65,6 @@ public class Note {
         this.content = content;
     }
 
-//    public boolean getIsPublic() {
-//        return isPublic;
-//    }
-//
-//    public void setIsPublic(boolean aPublic) {
-//        isPublic = aPublic;
-//    }
-//
-//    public String getPublicSlug() {
-//        return publicSlug;
-//    }
-//
-//    public void setPublicSlug(String publicSlug) {
-//        this.publicSlug = publicSlug;
-//    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -105,12 +81,5 @@ public class Note {
         this.updatedAt = updatedAt;
     }
 
-//    public LocalDateTime getDeletedAt() {
-//        return deletedAt;
-//    }
-//
-//    public void setDeletedAt(LocalDateTime deletedAt) {
-//        this.deletedAt = deletedAt;
-//    }
 }
 

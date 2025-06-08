@@ -28,13 +28,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
-//@CrossOrigin("http://localhost:5173")
 public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authManager;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refService;
-
     @Autowired
     public AuthController(UserService userService, AuthenticationManager authManager, JwtUtil jwtUtil,
                           RefreshTokenService refService) {
@@ -51,9 +49,6 @@ public class AuthController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(dto));
     }
-
-
-
     @PostMapping("/login")
     public ResponseEntity<?> handleLogin(@RequestBody LoginRequest loginRequest) {
         /*Authentication auth = */

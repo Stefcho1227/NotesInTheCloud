@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/shares")
-//@CrossOrigin("http://localhost:5173")
 public class NoteShareController {
     private final NoteShareService noteShareService;
 
@@ -35,6 +34,6 @@ public class NoteShareController {
     }
     @GetMapping("/shared/{userId}")
     public ResponseEntity<List<NoteShare>> sharedWith(@PathVariable Integer userId){
-        return ResponseEntity.status(HttpStatus.FOUND).body(noteShareService.sharedToMe(userId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(noteShareService.sharedToMe(userId));
     }
 }
